@@ -1,7 +1,9 @@
 import { GlobalContext } from "@/context/GlobalProvider";
+import { addKey, getKey, setupIndexedDB } from "@/utils/keyManagement";
 import * as dotenv from "dotenv";
 import "dotenv/config";
 import { useContext, useEffect, useState } from "react";
+import { CryptoManager } from "@/utils/cryptoManager";
 
 dotenv.config();
 
@@ -45,7 +47,6 @@ export const useUserExists = (
       }
 
       setData(data);
-      // return data;
     } catch (err) {
       console.error("err:", err);
       setError(

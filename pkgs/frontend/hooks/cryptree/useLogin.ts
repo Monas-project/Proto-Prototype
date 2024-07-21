@@ -3,6 +3,8 @@ import * as dotenv from "dotenv";
 import "dotenv/config";
 import { GlobalContext } from "@/context/GlobalProvider";
 import { useUserExists } from "./useUserExists";
+import { addKey, getKey, setupIndexedDB } from "@/utils/keyManagement";
+import { CryptoManager } from "@/utils/cryptoManager";
 
 dotenv.config();
 const baseUrl: string = process.env.CRYPTREE_API_URL || "http://localhost:8000";
@@ -31,7 +33,29 @@ export const useLogin = (address: `0x${string}`, signature: `0x${string}`) => {
     if (!address || !signature) return;
 
     setLoading(true);
+
+    let subfolderKey: string = "";
+
     try {
+      setupIndexedDB();
+      const res = await getKey(address);
+      subfolderKey = res.secretKey;
+    } catch (err) {
+      // TODO: ブロックチェーンには登録があるが、IndexedDBに登録がない場合の処理が必要になる。keyのimport or 新規作成を選ばせるモーダルの表示
+      console.error("err:", err);
+      setError(
+        err instanceof Error ? err : new Error("An unknown error occurred")
+      );
+    }
+
+    if (!subfolderKey) {
+      console.log("subfolderKey is not found in login");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const body = JSON.stringify({ address, signature });
       const res = await fetch(`${baseUrl}/api/login`, {
         method: "POST",
         headers: {

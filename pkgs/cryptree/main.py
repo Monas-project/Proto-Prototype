@@ -5,15 +5,16 @@ from fastapi.middleware.cors import CORSMiddleware
 from crypt_tree_node import CryptreeNode
 from datetime import datetime, timedelta
 from jose import jwt, JWTError
-from web3 import Web3
+from web3 import Web3, constants
 from eth_account.messages import encode_defunct
-from tableland import Tableland
+# from tableland import Tableland
 from model import GenerateRootNodeRequest, FetchNodeRequest, FetchNodeResponse, ReEncryptRequest, LoginRequest
 import os
 from dotenv import load_dotenv
 from fake_ipfs import FakeIPFS
 from ipfs_client import IpfsClient
 import base64
+from root_id_store_contract import RootIdStoreContract
 
 
 # .envファイルの内容を読み込見込む
@@ -65,10 +66,13 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
     except JWTError:
         raise credentials_exception
     
-    root_id, root_key = Tableland.get_root_info(address)
-    return {"address": address, "root_id": root_id, "root_key": root_key}
+    # root_id, root_key = Tableland.get_root_info(address)
+    root_id = RootIdStoreContract.get_root_id(address)
+    return {"address": address, "root_id": root_id}
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
+    print('create_access_token')
+    print(data)
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.now() + expires_delta
@@ -93,14 +97,25 @@ async def user_exists(request: LoginRequest = Body(...)):
     # 署名されたメッセージからアドレスを復元し、提供されたアドレスと比較
     recovered_address = w3.eth.account.recover_message(message, signature=request.signature)
     if recovered_address.lower() == request.address.lower():
-        user = Tableland.get(request.address)
-        return {"exists": user is not None}
+        root_id = RootIdStoreContract.get_root_id(request.address)
+        print('root_id in /exists')
+        print(root_id)
+        return {"exists": root_id != ""}
+
 
 @router.post("/signup")
 async def signup(request: GenerateRootNodeRequest = Body(...)):
-    user = Tableland.get(request.owner_id);
-    if user:
+    print('request')
+    print(request)
+    # user = Tableland.get(request.owner_id);
+    root_id = RootIdStoreContract.get_root_id(request.owner_id)
+    print('root_id')
+    
+    if root_id != "":
         raise HTTPException(status_code=400, detail="User already exists")
+    
+    print("root_id")
+    print(root_id)
 
     message = encode_defunct(text=SECRET_MESSAGE)
     # 署名されたメッセージからアドレスを復元し、提供されたアドレスと比較
@@ -112,8 +127,9 @@ async def signup(request: GenerateRootNodeRequest = Body(...)):
         )
 
         try:
-            root_node = CryptreeNode.create_node(name=request.name, owner_id=request.owner_id, isDirectory=True, ipfs_client=ipfs_client)
+            root_node = CryptreeNode.create_node(name=request.name, owner_id=request.owner_id, isDirectory=True, ipfs_client=ipfs_client, root_key=request.key)
         except Exception as e:
+            print(e)
             raise HTTPException(status_code=400, detail=str(e))
 
         return {
@@ -141,7 +157,9 @@ async def login(request: LoginRequest = Body(...)):
         access_token = create_access_token(
             data={"sub": address}, expires_delta=access_token_expires
         )
-        root_id, root_key = Tableland.get_root_info(address)
+        root_key = request.key
+        # root_id, root_key = Tableland.get_root_info(address)
+        root_id = RootIdStoreContract.get_root_id(address)
 
         node = CryptreeNode.get_node(root_id, root_key, ipfs_client)
         return {
@@ -159,11 +177,12 @@ async def login(request: LoginRequest = Body(...)):
 @router.delete("/delete")
 async def delete_node(
     node_id: str = Form(...),  # Retrieve the node ID to be deleted from the form data
+    root_key: str=Form(...),  # Retrieve the root key from the form data
     current_user: dict = Depends(get_current_user)  # Retrieve current user information
 ):
     try:
         # Retrieve the root node of the current user
-        root_node = CryptreeNode.get_node(current_user["root_id"], current_user["root_key"], ipfs_client)
+        root_node = CryptreeNode.get_node(current_user["root_id"], root_key, ipfs_client)
         # Find the parent node of the node to be deleted
         parent_node = CryptreeNode.find_parent(node_id, root_node, ipfs_client)
         # Return 400 error if parent node is not found
@@ -182,6 +201,7 @@ async def create(
     name: str = Form(...),
     owner_id: str = Form(...),
     parent_cid: str = Form(...),
+    root_key: str = Form(...),
     subfolder_key: Optional[str] = Form(None),
     file_data: Optional[UploadFile] = File(None),
     current_user: dict = Depends(get_current_user),
@@ -191,8 +211,9 @@ async def create(
     # file_data = request.file_data.encode() if request.file_data else None
     file_data = await file_data.read() if file_data else None
     try:
-        new_node = CryptreeNode.create_node(name=name, owner_id=current_user["address"], isDirectory=(file_data is None), parent=current_node, file_data=file_data, ipfs_client=ipfs_client)
-        root_id, _ = Tableland.get_root_info(current_user["address"]);
+        new_node = CryptreeNode.create_node(name=name, owner_id=current_user["address"], isDirectory=(file_data is None), parent=current_node, file_data=file_data, ipfs_client=ipfs_client, root_key=root_key)
+        # root_id, _ = Tableland.get_root_info(current_user["address"]);
+        root_id = RootIdStoreContract.get_root_id(current_user["address"])
     except Exception as e:
         print(e)
         raise HTTPException(status_code=400, detail=str(e))
@@ -209,7 +230,7 @@ async def fetch(request: FetchNodeRequest = Body(...), current_user: dict = Depe
     cid = request.cid
     node = CryptreeNode.get_node(cid, subfolder_key, ipfs_client)
     children = node.metadata.children
-    root_id, _ = Tableland.get_root_info(node.metadata.owner_id)
+    root_id = RootIdStoreContract.get_root_id(current_user["address"])
     response = FetchNodeResponse(
         metadata=node.metadata,
         subfolder_key=node.subfolder_key,
@@ -241,10 +262,10 @@ async def re_encrypt(request: ReEncryptRequest = Body(...), current_user: dict =
     new_node = target_node.re_encrypt_and_update(parent_node, ipfs_client)
 
     root_id = current_user['root_id']
-    new_root_id, _ = Tableland.get_root_info(current_user["address"])
+    new_root_id = RootIdStoreContract.get_root_id(current_user["address"])
     # 新しいルートIDになるまでループ
     while root_id == new_root_id:
-        new_root_id, _ = Tableland.get_root_info(current_user["address"])
+        new_root_id = RootIdStoreContract.get_root_id(current_user["address"])
 
     return {
         "new_subfolder_key": new_node.subfolder_key,

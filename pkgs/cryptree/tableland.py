@@ -11,14 +11,14 @@ class Tableland:
     infura_project_id = os.getenv('INFURA_PROJECT_ID')
     infura_base_url = os.getenv('INFURA_BASE_URL')
     private_key = os.getenv('PRIVATE_KEY')
-    table_contract_address = os.getenv('TABLE_CONTRACT_ADDRESS')
+    root_id_store_contract_address = os.getenv('ROOT_ID_STORE_CONTRACT_ADDRESS')
     tableland_url = os.getenv('TABLELAND_URL')
     address_column = os.getenv('ADDRESS_COLUMN_NAME')
     table_id = os.getenv('TABLE_ID')
     chain_id = os.getenv('CHAIN_ID')
     root_table_name = f"users_{chain_id}_{table_id}"
 
-    if not (infura_project_id and infura_base_url and private_key and table_contract_address):
+    if not (infura_project_id and infura_base_url and private_key and root_id_store_contract_address):
         raise ValueError("Environment variables not properly configured.")
     
     infura_url = f"{infura_base_url}/{infura_project_id}"
@@ -27,7 +27,7 @@ class Tableland:
     
     @classmethod
     def get_contract(cls):
-        contract_address = Web3.to_checksum_address(cls.table_contract_address)
+        contract_address = Web3.to_checksum_address(cls.root_id_store_contract_address)
         with open('tableland_abi.json', 'r') as f:
             contract_abi = json.load(f)
         return cls.web3.eth.contract(address=contract_address, abi=contract_abi)
@@ -71,7 +71,7 @@ class Tableland:
     def build_transaction(cls, contract, statement, nonce):
         function = contract.functions.mutate(
                 cls.admin_account,
-                cls.table_id,
+                int(cls.table_id),
                 statement,
             )
         # TODO: gasの値を適切に設定する
