@@ -271,9 +271,5 @@ async def reset_root(
         return {"message": "Root reset successfully"}
     else:
         raise HTTPException(status_code=401, detail="Invalid signature or address")
-        
-    
-    
-
 
 app.include_router(router, prefix="/api")
