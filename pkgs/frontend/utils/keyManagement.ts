@@ -193,26 +193,39 @@ Delete key operation
 引数
 - id: number
 */
-export function deleteKey(walletAddress: string, cid: string) {
-  const request = indexedDB.open("KeyDatabase", 1);
+export function deleteKey(walletAddress: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open("KeyDatabase", 1);
 
-  request.onsuccess = function (event) {
-    const target = event.target as IDBOpenDBRequest;
-    const db = target.result;
-    const transaction = db.transaction(["keys"], "readwrite");
-    const store = transaction.objectStore("keys");
-    store.delete([walletAddress, cid]);
-
-    transaction.oncomplete = function () {
-      console.log("Key deleted successfully");
-    };
-    transaction.onerror = function (event) {
+    request.onsuccess = function (event) {
       const target = event.target as IDBOpenDBRequest;
-      console.error("Transaction error:", target.error);
+      const db = target.result;
+      const transaction = db.transaction(["keys"], "readwrite");
+      const store = transaction.objectStore("keys");
+      const deleteRequest = store.delete([walletAddress]);
+
+      transaction.oncomplete = function () {
+        console.log("Key deleted successfully");
+        resolve();
+      };
+
+      transaction.onerror = function (event) {
+        const target = event.target as IDBTransaction;
+        console.error("Transaction error:", target.error);
+        reject(target.error);
+      };
+
+      deleteRequest.onerror = function (event) {
+        const target = event.target as IDBRequest;
+        console.error("Delete request error:", target.error);
+        reject(target.error);
+      };
     };
-  };
-  request.onerror = function (event) {
-    const target = event.target as IDBOpenDBRequest;
-    console.error("Database error:", target.error);
-  };
+
+    request.onerror = function (event) {
+      const target = event.target as IDBOpenDBRequest;
+      console.error("Database error:", target.error);
+      reject(target.error);
+    };
+  });
 }

@@ -195,6 +195,7 @@ export default function MyBox() {
       formData.append("name", "test " + Math.random().toString(36).slice(-8));
       formData.append("owner_id", address);
       formData.append("subfolder_key", currentNodeKey!);
+      formData.append("root_key", rootKey!);
       formData.append("parent_cid", currentNodeCid!);
       const res = await createNode(accessToken!, formData);
       setRootId(res.root_id);
@@ -247,11 +248,21 @@ export default function MyBox() {
   /**
    * deleteFile function
    */
-  const deleteFile = async (id: any) => {
+  const deleteFile = async (cid: string) => {
     try {
       globalContext.setLoading(true);
       // call delate data method
-      await deleteTableData(id);
+      // await deleteTableData(id);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/delete`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          node_id: cid,
+          root_key: rootKey!,
+        }),
+      });
       toast.success(
         "Delete File Success!! Please wait a moment until it is reflected.",
         {
@@ -425,18 +436,10 @@ export default function MyBox() {
       }
       globalContext.setLoading(true);
       try {
-        // init contract
-        await createContract(walletClient);
-        // get all table data
-
-        // await getNode();
-        const tableData = await getAllTableData();
         console.log("getNodeData:", getNodeData);
-        const metadata = getNodeData?.metadata;
         const children = getNodeData?.children;
         const datas = children;
         setTableDatas(datas);
-        // TODO call fetch API from cryptree
       } catch (err) {
         console.error("err", err);
       } finally {

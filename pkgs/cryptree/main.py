@@ -5,9 +5,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from crypt_tree_node import CryptreeNode
 from datetime import datetime, timedelta
 from jose import jwt, JWTError
-from web3 import Web3, constants
+from web3 import Web3
 from eth_account.messages import encode_defunct
-# from tableland import Tableland
 from model import GenerateRootNodeRequest, FetchNodeRequest, FetchNodeResponse, ReEncryptRequest, LoginRequest
 import os
 from dotenv import load_dotenv
@@ -66,13 +65,10 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
     except JWTError:
         raise credentials_exception
     
-    # root_id, root_key = Tableland.get_root_info(address)
     root_id = RootIdStoreContract.get_root_id(address)
     return {"address": address, "root_id": root_id}
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
-    print('create_access_token')
-    print(data)
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.now() + expires_delta
@@ -98,24 +94,15 @@ async def user_exists(request: LoginRequest = Body(...)):
     recovered_address = w3.eth.account.recover_message(message, signature=request.signature)
     if recovered_address.lower() == request.address.lower():
         root_id = RootIdStoreContract.get_root_id(request.address)
-        print('root_id in /exists')
-        print(root_id)
         return {"exists": root_id != ""}
 
 
 @router.post("/signup")
 async def signup(request: GenerateRootNodeRequest = Body(...)):
-    print('request')
-    print(request)
-    # user = Tableland.get(request.owner_id);
     root_id = RootIdStoreContract.get_root_id(request.owner_id)
-    print('root_id')
     
     if root_id != "":
         raise HTTPException(status_code=400, detail="User already exists")
-    
-    print("root_id")
-    print(root_id)
 
     message = encode_defunct(text=SECRET_MESSAGE)
     # 署名されたメッセージからアドレスを復元し、提供されたアドレスと比較
@@ -158,7 +145,6 @@ async def login(request: LoginRequest = Body(...)):
             data={"sub": address}, expires_delta=access_token_expires
         )
         root_key = request.key
-        # root_id, root_key = Tableland.get_root_info(address)
         root_id = RootIdStoreContract.get_root_id(address)
 
         node = CryptreeNode.get_node(root_id, root_key, ipfs_client)
@@ -208,11 +194,9 @@ async def create(
 ):
     parent_subfolder_key = subfolder_key
     current_node = CryptreeNode.get_node(parent_cid, parent_subfolder_key, ipfs_client)
-    # file_data = request.file_data.encode() if request.file_data else None
     file_data = await file_data.read() if file_data else None
     try:
         new_node = CryptreeNode.create_node(name=name, owner_id=current_user["address"], isDirectory=(file_data is None), parent=current_node, file_data=file_data, ipfs_client=ipfs_client, root_key=root_key)
-        # root_id, _ = Tableland.get_root_info(current_user["address"]);
         root_id = RootIdStoreContract.get_root_id(current_user["address"])
     except Exception as e:
         print(e)
@@ -272,6 +256,24 @@ async def re_encrypt(request: ReEncryptRequest = Body(...), current_user: dict =
         "new_cid": new_node.cid,
         "root_id": new_root_id,
     }
+
+@router.post("/reset")
+async def reset_root(
+    address: str = Body(...),
+    signature: str = Body(...),
+):
+    message = encode_defunct(text=SECRET_MESSAGE)
+    recovered_address = w3.eth.account.recover_message(message, signature=signature)
+    if recovered_address.lower() == address.lower():
+        blank_string = RootIdStoreContract.update_root_id(address, "")
+        if blank_string != "":
+            HTTPException(status_code=400, detail="Failed to reset root")
+        return {"message": "Root reset successfully"}
+    else:
+        raise HTTPException(status_code=401, detail="Invalid signature or address")
+        
+    
+    
 
 
 app.include_router(router, prefix="/api")

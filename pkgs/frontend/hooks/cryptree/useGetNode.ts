@@ -29,8 +29,6 @@ export const useGetNode = (subfolder_key: string, cid: string) => {
   } = useContext(GlobalContext);
 
   const getNode = async () => {
-    console.log("subfolder_keyyy:", subfolder_key);
-    console.log("cidddd:", cid);
     if (!subfolder_key || !cid) return;
     setLoading(true);
     try {
@@ -46,8 +44,6 @@ export const useGetNode = (subfolder_key: string, cid: string) => {
           cid,
         }),
       });
-
-      console.log("res:", res);
 
       if (!res.ok) {
         throw new Error("Failed to Get Node");

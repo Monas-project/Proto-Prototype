@@ -34,38 +34,20 @@ export const useSignUp = (address: `0x${string}`, signature: `0x${string}`) => {
     if (!address || !signature) return;
 
     setLoading(true);
-    let subfolderKey: string = "";
-    try {
-      setupIndexedDB();
-      const cryptoManager = new CryptoManager();
-      const key = await cryptoManager.generateKey();
-      const exportedKey = window.btoa(
-        String.fromCharCode(...(await cryptoManager.exportKey(key)))
-      );
-
-      const res = await addKey(address, exportedKey);
-      subfolderKey = res.secretKey;
-    } catch (err) {
-      console.error("err:", err);
-      setError(
-        err instanceof Error ? err : new Error("An unknown error occurred")
-      );
-    }
-
-    if (!subfolderKey) {
-      setLoading(false);
-      return;
-    }
+    setupIndexedDB();
+    const cryptoManager = new CryptoManager();
+    const key = await cryptoManager.generateKey();
+    const exportedKey = window.btoa(
+      String.fromCharCode(...(await cryptoManager.exportKey(key)))
+    );
 
     try {
       const body = JSON.stringify({
         name: "Root",
         owner_id: address,
         signature,
-        key: subfolderKey,
+        key: exportedKey,
       });
-      console.log("owner_id:", address);
-      console.log("signature:", signature);
       const res = await fetch(`${baseUrl}/api/signup`, {
         method: "POST",
         headers: {
@@ -73,9 +55,6 @@ export const useSignUp = (address: `0x${string}`, signature: `0x${string}`) => {
         },
         body,
       });
-
-      console.log("res:", res);
-      console.log("res.status:", res.status);
 
       const data = await res.json();
 
@@ -89,12 +68,15 @@ export const useSignUp = (address: `0x${string}`, signature: `0x${string}`) => {
       if (data.access_token) {
         setAccessToken(data.access_token);
       }
+      const rootId = data?.root_node?.root_id;
+      const rootKey = data?.root_node?.subfolder_key;
 
+      addKey(address, rootKey, rootId);
       setData(data);
-      setCurrentNodeCid(data?.root_node?.root_id);
-      setCurrentNodeKey(data?.root_node?.subfolder_key);
-      setRootId(data?.root_node?.root_id);
-      setRootKey(data?.root_node?.subfolder_key);
+      setCurrentNodeCid(rootId);
+      setCurrentNodeKey(rootKey);
+      setRootId(rootId);
+      setRootKey(rootKey);
     } catch (err) {
       console.error("err:", err);
       setError(

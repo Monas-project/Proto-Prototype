@@ -35,12 +35,7 @@ export const useUserExists = (
         }),
       });
 
-      console.log("res:", res);
-      console.log("res.status:", res.status);
-
       const data = await res.json();
-
-      console.log("data:", data);
 
       if (!res.ok) {
         throw new Error("Failed to signup");
