@@ -13,6 +13,7 @@ import { polygonAmoy } from "wagmi/chains";
 import "../styles/globals.css";
 import { ResponseData } from "./api/env";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import DarkMode from "@/components/layouts/DarkMode/DarkMode";
 
 /**
  * MyApp Component
@@ -67,7 +68,9 @@ function MyApp({ Component, pageProps }: AppProps) {
               }}
             >
               <GlobalProvider>
-                <Component {...pageProps} />
+                <DarkMode>
+                  <Component {...pageProps} />
+                </DarkMode>
               </GlobalProvider>
             </RainbowKitProvider>
           </QueryClientProvider>

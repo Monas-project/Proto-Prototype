@@ -1,18 +1,12 @@
 import Button from "@/components/elements/Button/Button";
 import CompoundButton from "@/components/elements/Button/CompoundButton";
-import {
-  DocumentIcon,
-  FolderIcon,
-} from "@/components/elements/FileFormatIcon/FileFormatIcon";
+import FileFormatIcon from "@/components/elements/FileFormatIcon/FileFormatIcon";
 import Input from "@/components/elements/Input/Input";
 import LayoutMain from "@/components/layouts/Layout/LayoutMain";
 import Loading from "@/components/loading";
 import { GlobalContext } from "@/context/GlobalProvider";
 import {
   TableData,
-  createContract,
-  deleteTableData,
-  getAllTableData,
   getSelectedTableData,
   insertTableData,
 } from "@/hooks/useContract";
@@ -30,7 +24,7 @@ import {
 import { useContext, useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useAccount, useWalletClient } from "wagmi";
+import { useAccount } from "wagmi";
 import { ResponseData } from "./api/env";
 import { useGetNode } from "@/hooks/cryptree/useGetNode";
 import { useRouter } from "next/router";
@@ -39,12 +33,13 @@ import FileUpload from "@/components/elements/FileUpload/FileUpload";
 import { downloadFile } from "@/utils/downloadFile";
 import { reEncryptNode } from "@/cryptree/reEncryptNode";
 import Breadcrumb from "@/components/elements/Breadcrumb/Breadcrumb";
+import According from "@/components/elements/According/According";
 
 const fileTableTr = [
-  { th: "Name", width: 35 },
-  { th: "Owner", width: 25 },
-  { th: "Data Modified", width: 14 },
-  { th: "More", width: 20 },
+  { th: "Name", width: 55, mWidth: 300 },
+  { th: "Owner", width: 12.5, mWidth: 100 },
+  { th: "Data Modified", width: 12.5, mWidth: 100 },
+  { th: "", width: 20, mWidth: 152 },
 ];
 
 export default function MyBox() {
@@ -59,7 +54,6 @@ export default function MyBox() {
   const [sharingData, setSharingData] = useState<any>(null);
 
   const globalContext = useContext(GlobalContext);
-  const { data: walletClient } = useWalletClient();
   const { address, isConnected } = useAccount();
   const {
     rootId,
@@ -164,7 +158,7 @@ export default function MyBox() {
       );
     } catch (err) {
       console.error("err uploadFile:", err);
-      toast.error("Failed...", {
+      toast.error("Failed...1", {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -451,72 +445,60 @@ export default function MyBox() {
 
   return (
     <LayoutMain>
-      <div className="bg-N92 h-full w-full flex flex-col text-N16 overflow-y-auto">
+      <div className="bg-Neutral-Background-2-Rest h-full w-full flex flex-col text-Neutral-Foreground-1-Rest overflow-y-auto">
         {globalContext.loading ? (
           <Loading />
         ) : (
           <>
-            <div className="w-full flex flex-col space-y-6 px-8 py-6 shadow-Elevation01 sticky top-0 bg-N92">
-              <div className="flex flex-row justify-between">
+            <div className="flex flex-col space-y-4 p-6 shadow-Elevation01-Light dark:shadow-Elevation01-Dark sticky top-0 bg-Neutral-Background-2-Rest">
+              <div className="flex flex-row justify-between items-center">
                 <Breadcrumb items={breadcrumbItems} onNavigate={moveToDir} />
-                {/* <div className="text-TitleLarge">Own Space</div> */}
                 <Button
                   layout="subtle"
                   headerVisible={true}
                   headerIcon={<Grid20Filled />}
                   labelVisible={false}
-                ></Button>
+                />
               </div>
-              <div className="flex flex-row justify-between">
-                <div className="flex flex-row space-x-6">
-                  <Button fotterVisible={true}>Type</Button>
-                  <Button fotterVisible={true}>People</Button>
-                  <Button fotterVisible={true}>Modified</Button>
+              <div className="flex flex-row justify-between items-center">
+                <div className="flex flex-row space-x-4">
+                  <Button label="Type" fotterVisible={true} />
+                  <Button label="People" fotterVisible={true} />
+                  <Button label="Modified" fotterVisible={true} />
                 </div>
-                <div className="flex flex-row space-x-6">
-                  <Button
-                    layout="neutral"
-                    headerVisible={true}
-                    headerIcon={<DocumentArrowUp20Regular />}
-                    onClick={() => setIsFileUploadModalOpen(true)}
-                  >
-                    Upload File
-                  </Button>
-                  <Button
-                    layout="neutral"
-                    headerVisible={true}
-                    headerIcon={<FolderAdd20Regular />}
-                    onClick={createFolder}
-                  >
-                    Create Folder
-                  </Button>
+                <div className="flex flex-row space-x-4">
+                  <Button label="Upload File" headerVisible={true} headerIcon={<DocumentArrowUp20Regular />} onClick={() => setIsFileUploadModalOpen(true)} />
+                  <Button label="Create Folder" headerVisible={true} headerIcon={<FolderAdd20Regular />} onClick={createFolder} />
                 </div>
               </div>
             </div>
-            <div className="w-full grow flex flex-col px-8 py-6 space-y-8">
-              <div className="w-full space-y-4">
-                <div className="text-TitleMedium">Recent Files</div>
-                {/* <div>{JSON.stringify(getNodeData)}</div> */}
-                <div className="flex flex-row px-8 space-x-4">
-                  <CompoundButton
-                    headerIcon={<FolderIcon />}
-                    layout="neutral"
-                    primaryText="AAAAAAAAAA"
-                    secondaryText="3 days ago"
-                  />
+
+            <div className="w-full grow flex flex-col p-6 space-y-6">
+              {/* <div>{JSON.stringify(getNodeData)}</div> */}
+              <According label="Recent Files">
+                <div className="w-full flex flex-row space-x-4 pl-6 first:pl-0">
+                  <CompoundButton headerIcon={<FileFormatIcon fileType="FolderIcon" />} layout="neutral" primaryText="AAAAAAAAAA" secondaryText="3 days ago" />
+                  <CompoundButton headerIcon={<FileFormatIcon fileType="FolderIcon" />} layout="neutral" primaryText="AAAAAAAAAA" secondaryText="3 days ago" />
+                  <CompoundButton headerIcon={<FileFormatIcon fileType="FolderIcon" />} layout="neutral" primaryText="AAAAAAAAAA" secondaryText="3 days ago" />
+                  <CompoundButton headerIcon={<FileFormatIcon fileType="FolderIcon" />} layout="neutral" primaryText="AAAAAAAAAA" secondaryText="3 days ago" />
+                  <CompoundButton headerIcon={<FileFormatIcon fileType="FolderIcon" />} layout="neutral" primaryText="AAAAAAAAAA" secondaryText="3 days ago" />
+                  <CompoundButton headerIcon={<FileFormatIcon fileType="FolderIcon" />} layout="neutral" primaryText="AAAAAAAAAA" secondaryText="3 days ago" />
                 </div>
-              </div>
-              <div className="w-full grow rounded-lg px-6 bg-N96">
+              </According>
+
+              <div className="grow rounded-lg px-6 bg-Neutral-Background-1-Rest">
                 <table className="w-full inline-block">
-                  <thead className="w-full flex flex-row px-4 py-4 border-b border-NV130 text-TitleSmall text-NV60">
-                    <tr className="w-full h-fit flex [&_th]:p-0 [&_th]:inline-block space-x-8 [&_th]:font-medium">
+
+                  <thead className="flex border-b border-Neutral-Stroke-1-Rest text-TitleSmall text-Neutral-Foreground-Variant-Rest">
+                    <tr className="w-full h-fit flex flex-row space-x-8 px-6 py-4 text-left [&_th]:p-0 [&_th]:font-medium">
                       {fileTableTr.map((x) => (
-                        <th key={x.th} style={{ width: `${x.width}%` }}>
+                        <th key={x.th} style={{ width: `${x.width}%`, minWidth: `${x.mWidth}px` }}>
                           {x.th}
                         </th>
                       ))}
                     </tr>
                   </thead>
+
                   <tbody className="flex flex-col w-full last:[&>tr]:border-none">
                     {getNodeData?.children?.map((data: any, i) => (
                       <tr
@@ -533,11 +515,10 @@ export default function MyBox() {
                           )
                         }
                         className={`w-full flex flex-row pl-8 py-3 space-x-8 border-b border-NV150 text-BodyLarge text-NV10 items-center group 
-                                              ${
-                                                isSelected
-                                                  ? "bg-N70"
-                                                  : "bg-N96 hover:bg-N90"
-                                              }
+                                              ${isSelected
+                            ? "bg-N70"
+                            : "bg-N96 hover:bg-N90"
+                          }
                                               [&>td]:flex`}
                       >
                         <td
@@ -545,9 +526,9 @@ export default function MyBox() {
                           className="flex flex-row items-center space-x-6"
                         >
                           {data.file_data && data.file_data.length > 0 ? (
-                            <DocumentIcon />
+                            <FileFormatIcon fileType='DocumentIcon' />
                           ) : (
-                            <FolderIcon />
+                            <FileFormatIcon fileType='FolderIcon' />
                           )}
                           <div className="ml-4">{data.metadata.name}</div>
                         </td>
@@ -570,9 +551,8 @@ export default function MyBox() {
                           className="space-x-5 pr-8 justify-end items-center"
                         >
                           <div
-                            className={`space-x-3 flex-row group-hover:flex ${
-                              isSelected ? "flex" : "hidden"
-                            }`}
+                            className={`space-x-3 flex-row group-hover:flex ${isSelected ? "flex" : "hidden"
+                              }`}
                           >
                             {data.file_data && data.file_data.length > 0 ? (
                               <Button
@@ -599,7 +579,7 @@ export default function MyBox() {
                               headerVisible={true}
                               headerIcon={<Share20Regular />}
                               labelVisible={false}
-                            ></Button>
+                            />
                             <Button
                               layout="subtle"
                               headerVisible={true}
@@ -608,7 +588,7 @@ export default function MyBox() {
                               onClick={async () => {
                                 await deleteFile(data.id);
                               }}
-                            ></Button>
+                            />
                             <Button
                               layout="subtle"
                               headerVisible={true}
@@ -617,7 +597,7 @@ export default function MyBox() {
                               onClick={() =>
                                 reEncrypt(getNodeData.metadata.children[i].cid)
                               }
-                            ></Button>
+                            />
                           </div>
                           <MoreVertical16Regular />
                         </td>
@@ -629,64 +609,56 @@ export default function MyBox() {
             </div>
           </>
         )}
+
         {isFileUploadModalOpen && (
           <div
-            onClick={(e) =>
-              e.target === e.currentTarget && setIsFileUploadModalOpen(false)
-            }
-            className="fixed top-0 left-0 right-0 bottom-0 bg-N0/60"
+            onClick={(e) => e.target === e.currentTarget && setIsFileUploadModalOpen(false)}
+            className="fixed top-0 left-0 right-0 bottom-0 bg-Neutral-Background-Overlay-Rest"
           >
-            <div className="relative top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/2 rounded-lg bg-N96 p-8 space-y-6">
-              <div className="text-TitleLarge">Upload File</div>
-              {/* uploading file */}
-
-              <FileUpload
-                onFileSelect={(file) => console.log("file: ", file)}
-                uploadFile={uploadFile}
-                close={() => setIsFileUploadModalOpen(false)}
-              />
-            </div>
+            <FileUpload
+              onFileSelect={(file) => console.log("file: ", file)}
+              uploadFile={uploadFile}
+              close={() => setIsFileUploadModalOpen(false)}
+            />
           </div>
         )}
+
         {/* Share Button Dialog */}
         {isShareModalOpen && (
           <div
             onClick={(e) =>
               e.target === e.currentTarget && setIsShareModalOpen(false)
             }
-            className="fixed top-0 left-0 right-0 bottom-0 bg-N0/60"
+            className="fixed top-0 left-0 right-0 bottom-0 bg-Neutral-Background-Overlay-Rest"
           >
-            <div className="relative top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/2 rounded-lg bg-N96 p-8 space-y-6">
+            <div className="relative top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/2 rounded-lg bg-Neutral-Background-1-Rest p-8 space-y-6">
               <div className="text-TitleLarge">Address</div>
               <Input
                 id="address"
-                layout="outlineLabel"
-                size="larger"
+                label=""
+                layout="outline"
                 inputValue={to}
                 setInputValue={setTo}
               />
               <div className="w-full flex flex-row justify-between">
                 <Button
                   layout="neutral"
-                  size="large"
+                  label="Close"
                   onClick={() => setIsShareModalOpen(false)}
-                >
-                  Close
-                </Button>
+                />
                 <Button
                   layout="primary"
-                  size="large"
+                  label="send"
                   onClick={async () => {
                     // call shareFile method
                     await shareFile();
                   }}
-                >
-                  send
-                </Button>
+                />
               </div>
             </div>
           </div>
         )}
+
         <ToastContainer
           position="top-right"
           autoClose={5000}

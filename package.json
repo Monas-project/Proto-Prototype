@@ -12,5 +12,9 @@
   },
   "workspaces": [
     "pkgs/*"
-  ]
+  ],
+  "dependencies": {
+    "@fluentui/react-icons": "^2.0.232",
+    "@lottiefiles/react-lottie-player": "^3.5.4"
+  }
 }
