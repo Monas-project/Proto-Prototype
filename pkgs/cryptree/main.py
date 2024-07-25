@@ -8,7 +8,7 @@ from jose import jwt, JWTError
 from web3 import Web3
 from eth_account.messages import encode_defunct
 from tableland import Tableland
-from model import GenerateRootNodeRequest, CreateNodeRequest, FetchNodeRequest, FetchNodeResponse, ReEncryptRequest, LoginRequest
+from model import GenerateRootNodeRequest, FetchNodeRequest, FetchNodeResponse, ReEncryptRequest, LoginRequest
 import os
 from dotenv import load_dotenv
 from fake_ipfs import FakeIPFS
@@ -19,13 +19,17 @@ import base64
 # .envファイルの内容を読み込見込む
 load_dotenv()
 
-# 例: 環境変数 'TEST_ENV' が 'True' の場合にのみ実際の接続を行う
+# 例: 環境変数 'ENV' が 'True' の場合にのみ実際の接続を行う
 ipfs_host = os.getenv("IPFS_HOST", "localhost")
 ipfs_port = os.getenv("IPFS_PORT", "5001")
-if os.environ.get('TEST_ENV') == 'development':
+
+allow_origin = os.getenv("ALLOW_ORIGIN", "http://localhost:3000")
+if os.environ.get('ENV') == 'development':
     ipfs_client = IpfsClient(f'http://{ipfs_host}:{ipfs_port}')
-else:
+elif os.environ.get('ENV') == 'test':
     ipfs_client = FakeIPFS()  # テスト用の偽のIPFSクライアント
+else:
+    ipfs_client = IpfsClient(f'https://{ipfs_host}:{ipfs_port}')
 
 w3 = Web3()
 app = FastAPI()
@@ -41,7 +45,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # http://localhost:3000 のみを許可
+    allow_origins=[allow_origin],  # フロントエンドのURLを許可
     allow_credentials=True,
     allow_methods=["*"],  # すべてのHTTPメソッドを許可
     allow_headers=["*"],  # すべてのHTTPヘッダーを許可
@@ -74,6 +78,11 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
+@router.get("/hello")
+async def hello():
+    res = ipfs_client.add_bytes(b"Hello, World!!!!!")
+    return {"message": res}
+
 @router.post("/users/me")
 async def read_users_me(current_user: dict = Depends(get_current_user)):
     return current_user
@@ -89,8 +98,6 @@ async def user_exists(request: LoginRequest = Body(...)):
 
 @router.post("/signup")
 async def signup(request: GenerateRootNodeRequest = Body(...)):
-    print('request:')
-    print(request)
     user = Tableland.get(request.owner_id);
     if user:
         raise HTTPException(status_code=400, detail="User already exists")
@@ -149,6 +156,26 @@ async def login(request: LoginRequest = Body(...)):
     else:
         raise HTTPException(status_code=401, detail="Invalid signature or address")
 
+@router.delete("/delete")
+async def delete_node(
+    node_id: str = Form(...),  # Retrieve the node ID to be deleted from the form data
+    current_user: dict = Depends(get_current_user)  # Retrieve current user information
+):
+    try:
+        # Retrieve the root node of the current user
+        root_node = CryptreeNode.get_node(current_user["root_id"], current_user["root_key"], ipfs_client)
+        # Find the parent node of the node to be deleted
+        parent_node = CryptreeNode.find_parent(node_id, root_node, ipfs_client)
+        # Return 400 error if parent node is not found
+        if not parent_node:
+            raise HTTPException(status_code=400, detail="Parent node not found")
+        # Delete the specified node
+        CryptreeNode.delete_node(node_id, ipfs_client, parent_node)
+        # Return success message
+        return {"message": "Node deleted successfully"}
+    except Exception as e:
+        # Return 500 error if an exception occurs
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/create")
 async def create(
@@ -167,6 +194,7 @@ async def create(
         new_node = CryptreeNode.create_node(name=name, owner_id=current_user["address"], isDirectory=(file_data is None), parent=current_node, file_data=file_data, ipfs_client=ipfs_client)
         root_id, _ = Tableland.get_root_info(current_user["address"]);
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=400, detail=str(e))
     return {
         "metadata": new_node.metadata,
@@ -198,9 +226,7 @@ async def fetch(request: FetchNodeRequest = Body(...), current_user: dict = Depe
         for child in response.children:
             if len(child.metadata.children) == 1 and child.metadata.children[0].fk is not None:
                 enc_file_data = ipfs_client.cat(child.metadata.children[0].cid)
-                # print(enc_file_data)
                 file_data = CryptreeNode.decrypt(child.metadata.children[0].fk, enc_file_data)
-                # print(file_data)
                 child.file_data = base64.b64encode(file_data).decode('utf-8')
     return response
 

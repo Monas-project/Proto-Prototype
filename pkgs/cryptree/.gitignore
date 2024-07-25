@@ -2,3 +2,6 @@ __pycache__
 .env
 cryptree
 ipfs/
+localstack/
+.vercel
+.env.production
