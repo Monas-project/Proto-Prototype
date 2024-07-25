@@ -1,6 +1,6 @@
 import { getEnv } from "@/utils/getEnv";
 import { ListInfo } from "@/utils/type";
-import { PushAPI } from "@pushprotocol/restapi";
+import { PushAPI, SignerType } from "@pushprotocol/restapi";
 import { ENV } from "@pushprotocol/restapi/src/lib/constants";
 import { ethers } from "ethers";
 
@@ -12,7 +12,8 @@ const createSignerForPushProtocol = async () => {
   const env = await getEnv();
   // create signer & provider object
   const signer = new ethers.Wallet(env.PUSH_PROTOCOL_PRIVATE_KEY);
-  const provider = new ethers.JsonRpcProvider(env.SEPOLIA_RPC_URL);
+
+  const provider = new ethers.JsonRpcProvider(env.POLYGON_AMOY_RPC_URL);
   // connect
   await signer.connect(provider);
   return signer;
@@ -22,7 +23,7 @@ const createSignerForPushProtocol = async () => {
  * init PushSDK
  * @param signer pushprotocol's signer
  */
-const initPushSDK = async (signer: any) => {
+const initPushSDK = async (signer: SignerType) => {
   const pushUser = await PushAPI.initialize(signer, {
     env: ENV.STAGING,
   });
@@ -33,7 +34,7 @@ const initPushSDK = async (signer: any) => {
  * get PushInfo
  * @param signer connected account's signer
  */
-export const getPushInfo = async (signer: any) => {
+export const getPushInfo = async (signer: SignerType) => {
   // init PushSDK
   const pushUser = await initPushSDK(signer);
   // get profile Info

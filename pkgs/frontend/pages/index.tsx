@@ -1,6 +1,5 @@
 import Loading from "@/components/loading";
 import { GlobalContext } from "@/context/GlobalProvider";
-import { useEthersSigner } from "@/hooks/useEthersProvider";
 import { getEnv } from "@/utils/getEnv";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useRouter } from "next/router";
@@ -15,7 +14,6 @@ export default function Login() {
   const [env, setEnv] = useState<ResponseData>();
   const account = useAccount();
   const router = useRouter();
-  const signer = useEthersSigner({ chainId: filecoinCalibration.id });
   const globalContext = useContext(GlobalContext);
   const { data: signMessageData, signMessageAsync } = useSignMessage();
   const { data: signUpData } = useSignUp(account?.address!, signMessageData!);
