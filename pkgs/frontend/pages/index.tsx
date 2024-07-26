@@ -1,23 +1,24 @@
 import Loading from "@/components/loading";
-import { GlobalContext } from "@/context/GlobalProvider";
-import { getEnv } from "@/utils/getEnv";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { useRouter } from "next/router";
-import { useContext, useEffect, useState } from "react";
-import { filecoinCalibration } from "viem/chains";
-import { useAccount, useSignMessage } from "wagmi";
-import { ResponseData } from "./api/env";
-import { useSignUp } from "@/hooks/cryptree/useSignUp";
-import { useLogin } from "@/hooks/cryptree/useLogin";
+import {GlobalContext} from "@/context/GlobalProvider";
+import {getEnv} from "@/utils/getEnv";
+import {ConnectButton} from "@rainbow-me/rainbowkit";
+import {useRouter} from "next/router";
+import {useContext, useEffect, useState} from "react";
+import {filecoinCalibration} from "viem/chains";
+import {useAccount, useSignMessage} from "wagmi";
+import {ResponseData} from "./api/env";
+import {useSignUp} from "@/hooks/cryptree/useSignUp";
+import {useLogin} from "@/hooks/cryptree/useLogin";
 
 export default function Login() {
+  const [routePushed, setRoutePushed] = useState(false);
   const [env, setEnv] = useState<ResponseData>();
   const account = useAccount();
   const router = useRouter();
   const globalContext = useContext(GlobalContext);
-  const { data: signMessageData, signMessageAsync } = useSignMessage();
-  const { data: signUpData } = useSignUp(account?.address!, signMessageData!);
-  const { data: loginData } = useLogin(account?.address!, signMessageData!);
+  const {data: signMessageData, signMessageAsync} = useSignMessage();
+  const {data: signUpData} = useSignUp(account?.address!, signMessageData!);
+  const {data: loginData} = useLogin(account?.address!, signMessageData!);
 
   /**
    * authenticate
@@ -27,7 +28,7 @@ export default function Login() {
       globalContext.setLoading(true);
       // get .env values
       const envData = await getEnv();
-      await signMessageAsync({ message: envData.SECRET_MESSAGE });
+      await signMessageAsync({message: envData.SECRET_MESSAGE});
     } catch (err) {
       console.error("error:", err);
     } finally {
@@ -37,8 +38,11 @@ export default function Login() {
 
   useEffect(() => {
     console.log("signMessageData:", signMessageData);
+    console.log("routePushed:", routePushed);
     if (signMessageData) {
-      if (signUpData || loginData) {
+      if ((signUpData || loginData) && !routePushed) {
+        console.log("setRoutePushed(true)");
+        setRoutePushed(true);
         router.push("/my-box");
       }
     }
@@ -118,7 +122,7 @@ export default function Login() {
                           }
 
                           return (
-                            <div style={{ display: "flex", gap: 12 }}>
+                            <div style={{display: "flex", gap: 12}}>
                               <button onClick={authenticate} type="button">
                                 signUp/login
                               </button>
