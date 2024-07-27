@@ -122,12 +122,8 @@ export default function MyBox() {
 
     // ここにファイルアップロードのためのAPI呼び出し処理を記述します
     console.log("ファイルをアップロード中…");
-    // 例: axios.post('your-upload-endpoint', formData);
     try {
       globalContext.setLoading(true);
-      // TODO call encrypt API from cryptree
-      // TODO call ipfs API from cryptree
-      // call same API when upload file & create folder
       const res = await createNode(accessToken!, formData);
 
       setRootId(res.root_id);
@@ -246,8 +242,6 @@ export default function MyBox() {
   const deleteFile = async (cid: string) => {
     try {
       globalContext.setLoading(true);
-      // call delate data method
-      // await deleteTableData(id);
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/delete`, {
         method: "DELETE",
         headers: {
@@ -339,9 +333,6 @@ export default function MyBox() {
   const reEncrypt = async (targetCid: string) => {
     try {
       globalContext.setLoading(true);
-      // TODO call reEncrypt API from cryptree
-      // TODO call ipfs API from cryptree
-      // TODO call upate query
 
       const res = await reEncryptNode(
         accessToken!,
