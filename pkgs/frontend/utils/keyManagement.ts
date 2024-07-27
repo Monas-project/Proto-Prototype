@@ -5,7 +5,6 @@ export function setupIndexedDB() {
     const target = event.target as IDBOpenDBRequest;
     const db = target.result;
     if (!db.objectStoreNames.contains("keys")) {
-      // db.createObjectStore("keys", { keyPath: ["walletAddress", "cid"] });
       db.createObjectStore("keys", { keyPath: ["walletAddress"] });
     }
   };
@@ -17,63 +16,6 @@ export function setupIndexedDB() {
     console.log("Database opened successfully");
   };
 }
-
-/*
-Add key operation
-引数
-- key: string
-*/
-// export function addKey(walletAddress: string, cid: string, secretKey: string) {
-// export function addKey(walletAddress: string, secretKey: string) {
-//   const request = indexedDB.open("KeyDatabase", 1);
-
-//   request.onsuccess = function (event) {
-//     const target = event.target as IDBOpenDBRequest;
-//     const db = target.result;
-//     const transaction = db.transaction(["keys"], "readwrite");
-//     const store = transaction.objectStore("keys");
-
-//     const getRequest = store.get([walletAddress]);
-
-//     getRequest.onsuccess = function (event) {
-//       const result = (event.target as IDBRequest).result;
-
-//       if (result) {
-//         console.log("Record already exists, skipping addition:", result);
-//         return;
-//       }
-//       const addRequest = store.add({
-//         walletAddress: walletAddress,
-//         // cid: cid,
-//         secretKey: secretKey,
-//       });
-
-//       addRequest.onsuccess = function () {
-//         console.log("Key added successfully");
-//       };
-
-//       addRequest.onerror = function (event) {
-//         const target = event.target as IDBRequest;
-//         console.error("Add request error:", target.error);
-//       };
-//     };
-
-//     getRequest.onerror = function (event) {
-//       const target = event.target as IDBRequest;
-//       console.error("Get request error:", target.error);
-//     };
-
-//     transaction.onerror = function (event) {
-//       const target = event.target as IDBRequest;
-//       console.error("Transaction error:", target.error);
-//     };
-//   };
-
-//   request.onerror = function (event) {
-//     const target = event.target as IDBRequest;
-//     console.error("Database error:", target.error);
-//   };
-// }
 
 type AddKeyResponse = {
   walletAddress: string;
