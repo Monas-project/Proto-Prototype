@@ -66,31 +66,3 @@ export class CryptoManager {
     );
   }
 }
-
-//   // 使用例
-//   async function example() {
-//     const cryptoManager = new CryptoManager();
-
-//     // 鍵の生成
-//     const key = await cryptoManager.generateKey();
-//     console.log('Generated key:', key);
-
-//     // 暗号化
-//     const plaintext = 'Hello, World!';
-//     const encrypted = await cryptoManager.encrypt(key, plaintext);
-//     console.log('Encrypted:', encrypted);
-
-//     // 復号化
-//     const decrypted = await cryptoManager.decrypt(key, encrypted.encryptedData, encrypted.iv);
-//     console.log('Decrypted:', decrypted);
-
-//     // キーのエクスポート（保存や送信のため）
-//     const exportedKey = await cryptoManager.exportKey(key);
-//     console.log('Exported key:', exportedKey);
-
-//     // キーのインポート（保存されたキーを使用するため）
-//     const importedKey = await cryptoManager.importKey(exportedKey);
-//     console.log('Imported key:', importedKey);
-//   }
-
-//   example().catch(console.error);
