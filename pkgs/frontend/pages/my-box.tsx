@@ -117,6 +117,7 @@ export default function MyBox() {
     formData.append("name", selectedFile.name);
     formData.append("owner_id", address!);
     formData.append("subfolder_key", currentNodeKey!);
+    formData.append("root_key", rootKey!);
     formData.append("parent_cid", currentNodeCid!);
 
     // ここにファイルアップロードのためのAPI呼び出し処理を記述します
@@ -467,8 +468,18 @@ export default function MyBox() {
                   <Button label="Modified" fotterVisible={true} />
                 </div>
                 <div className="flex flex-row space-x-4">
-                  <Button label="Upload File" headerVisible={true} headerIcon={<DocumentArrowUp20Regular />} onClick={() => setIsFileUploadModalOpen(true)} />
-                  <Button label="Create Folder" headerVisible={true} headerIcon={<FolderAdd20Regular />} onClick={createFolder} />
+                  <Button
+                    label="Upload File"
+                    headerVisible={true}
+                    headerIcon={<DocumentArrowUp20Regular />}
+                    onClick={() => setIsFileUploadModalOpen(true)}
+                  />
+                  <Button
+                    label="Create Folder"
+                    headerVisible={true}
+                    headerIcon={<FolderAdd20Regular />}
+                    onClick={createFolder}
+                  />
                 </div>
               </div>
             </div>
@@ -477,22 +488,57 @@ export default function MyBox() {
               {/* <div>{JSON.stringify(getNodeData)}</div> */}
               <According label="Recent Files">
                 <div className="w-full flex flex-row space-x-4 pl-6 first:pl-0">
-                  <CompoundButton headerIcon={<FileFormatIcon fileType="FolderIcon" />} layout="neutral" primaryText="AAAAAAAAAA" secondaryText="3 days ago" />
-                  <CompoundButton headerIcon={<FileFormatIcon fileType="FolderIcon" />} layout="neutral" primaryText="AAAAAAAAAA" secondaryText="3 days ago" />
-                  <CompoundButton headerIcon={<FileFormatIcon fileType="FolderIcon" />} layout="neutral" primaryText="AAAAAAAAAA" secondaryText="3 days ago" />
-                  <CompoundButton headerIcon={<FileFormatIcon fileType="FolderIcon" />} layout="neutral" primaryText="AAAAAAAAAA" secondaryText="3 days ago" />
-                  <CompoundButton headerIcon={<FileFormatIcon fileType="FolderIcon" />} layout="neutral" primaryText="AAAAAAAAAA" secondaryText="3 days ago" />
-                  <CompoundButton headerIcon={<FileFormatIcon fileType="FolderIcon" />} layout="neutral" primaryText="AAAAAAAAAA" secondaryText="3 days ago" />
+                  <CompoundButton
+                    headerIcon={<FileFormatIcon fileType="FolderIcon" />}
+                    layout="neutral"
+                    primaryText="AAAAAAAAAA"
+                    secondaryText="3 days ago"
+                  />
+                  <CompoundButton
+                    headerIcon={<FileFormatIcon fileType="FolderIcon" />}
+                    layout="neutral"
+                    primaryText="AAAAAAAAAA"
+                    secondaryText="3 days ago"
+                  />
+                  <CompoundButton
+                    headerIcon={<FileFormatIcon fileType="FolderIcon" />}
+                    layout="neutral"
+                    primaryText="AAAAAAAAAA"
+                    secondaryText="3 days ago"
+                  />
+                  <CompoundButton
+                    headerIcon={<FileFormatIcon fileType="FolderIcon" />}
+                    layout="neutral"
+                    primaryText="AAAAAAAAAA"
+                    secondaryText="3 days ago"
+                  />
+                  <CompoundButton
+                    headerIcon={<FileFormatIcon fileType="FolderIcon" />}
+                    layout="neutral"
+                    primaryText="AAAAAAAAAA"
+                    secondaryText="3 days ago"
+                  />
+                  <CompoundButton
+                    headerIcon={<FileFormatIcon fileType="FolderIcon" />}
+                    layout="neutral"
+                    primaryText="AAAAAAAAAA"
+                    secondaryText="3 days ago"
+                  />
                 </div>
               </According>
 
               <div className="grow rounded-lg px-6 bg-Neutral-Background-1-Rest">
                 <table className="w-full inline-block">
-
                   <thead className="flex border-b border-Neutral-Stroke-1-Rest text-TitleSmall text-Neutral-Foreground-Variant-Rest">
                     <tr className="w-full h-fit flex flex-row space-x-8 px-6 py-4 text-left [&_th]:p-0 [&_th]:font-medium">
                       {fileTableTr.map((x) => (
-                        <th key={x.th} style={{ width: `${x.width}%`, minWidth: `${x.mWidth}px` }}>
+                        <th
+                          key={x.th}
+                          style={{
+                            width: `${x.width}%`,
+                            minWidth: `${x.mWidth}px`,
+                          }}
+                        >
                           {x.th}
                         </th>
                       ))}
@@ -515,10 +561,11 @@ export default function MyBox() {
                           )
                         }
                         className={`w-full flex flex-row pl-8 py-3 space-x-8 border-b border-NV150 text-BodyLarge text-NV10 items-center group 
-                                              ${isSelected
-                            ? "bg-N70"
-                            : "bg-N96 hover:bg-N90"
-                          }
+                                              ${
+                                                isSelected
+                                                  ? "bg-N70"
+                                                  : "bg-N96 hover:bg-N90"
+                                              }
                                               [&>td]:flex`}
                       >
                         <td
@@ -526,9 +573,9 @@ export default function MyBox() {
                           className="flex flex-row items-center space-x-6"
                         >
                           {data.file_data && data.file_data.length > 0 ? (
-                            <FileFormatIcon fileType='DocumentIcon' />
+                            <FileFormatIcon fileType="DocumentIcon" />
                           ) : (
-                            <FileFormatIcon fileType='FolderIcon' />
+                            <FileFormatIcon fileType="FolderIcon" />
                           )}
                           <div className="ml-4">{data.metadata.name}</div>
                         </td>
@@ -551,8 +598,9 @@ export default function MyBox() {
                           className="space-x-5 pr-8 justify-end items-center"
                         >
                           <div
-                            className={`space-x-3 flex-row group-hover:flex ${isSelected ? "flex" : "hidden"
-                              }`}
+                            className={`space-x-3 flex-row group-hover:flex ${
+                              isSelected ? "flex" : "hidden"
+                            }`}
                           >
                             {data.file_data && data.file_data.length > 0 ? (
                               <Button
@@ -612,7 +660,9 @@ export default function MyBox() {
 
         {isFileUploadModalOpen && (
           <div
-            onClick={(e) => e.target === e.currentTarget && setIsFileUploadModalOpen(false)}
+            onClick={(e) =>
+              e.target === e.currentTarget && setIsFileUploadModalOpen(false)
+            }
             className="fixed top-0 left-0 right-0 bottom-0 bg-Neutral-Background-Overlay-Rest"
           >
             <FileUpload

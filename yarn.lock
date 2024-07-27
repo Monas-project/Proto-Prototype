@@ -2425,13 +2425,6 @@
   dependencies:
     "@openzeppelin/contracts" "4.8.3"
 
-"@tableland/evm@^5.0.0":
-  version "5.0.0"
-  resolved "https://registry.npmjs.org/@tableland/evm/-/evm-5.0.0.tgz"
-  integrity sha512-JZeIBtB2Z78sWprHPrbf8//QFNRiznniuj6+GRQmU57Mn9azf85m+GvvRbKqqR1Eil0V2LSvglFH738I5igE1w==
-  dependencies:
-    "@openzeppelin/contracts" "4.8.3"
-
 "@tableland/hardhat@^0.0.8":
   version "0.0.8"
   resolved "https://registry.npmjs.org/@tableland/hardhat/-/hardhat-0.0.8.tgz"
