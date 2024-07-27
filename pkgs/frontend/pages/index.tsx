@@ -10,6 +10,7 @@ import { useSignUp } from "@/hooks/cryptree/useSignUp";
 import { useLogin } from "@/hooks/cryptree/useLogin";
 
 export default function Login() {
+  const [routePushed, setRoutePushed] = useState(false);
   const [env, setEnv] = useState<ResponseData>();
   const account = useAccount();
   const router = useRouter();
@@ -36,8 +37,11 @@ export default function Login() {
 
   useEffect(() => {
     console.log("signMessageData:", signMessageData);
+    console.log("routePushed:", routePushed);
     if (signMessageData) {
-      if (signUpData || loginData) {
+      if ((signUpData || loginData) && !routePushed) {
+        console.log("setRoutePushed(true)");
+        setRoutePushed(true);
         router.push("/my-box");
       }
     }
