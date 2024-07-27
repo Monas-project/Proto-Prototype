@@ -25,14 +25,11 @@ export const reEncryptNode = async (
       }),
     });
 
-    console.log("res:", res);
-
     if (!res.ok) {
       throw new Error("Failed to Get Node");
     }
 
     const data = await res.json();
-    console.log("data:", data);
 
     return data;
   } catch (err) {

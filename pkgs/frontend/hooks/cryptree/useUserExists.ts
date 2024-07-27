@@ -1,7 +1,9 @@
 import { GlobalContext } from "@/context/GlobalProvider";
+import { addKey, getKey, setupIndexedDB } from "@/utils/keyManagement";
 import * as dotenv from "dotenv";
 import "dotenv/config";
 import { useContext, useEffect, useState } from "react";
+import { CryptoManager } from "@/utils/cryptoManager";
 
 dotenv.config();
 
@@ -33,19 +35,13 @@ export const useUserExists = (
         }),
       });
 
-      console.log("res:", res);
-      console.log("res.status:", res.status);
-
       const data = await res.json();
-
-      console.log("data:", data);
 
       if (!res.ok) {
         throw new Error("Failed to signup");
       }
 
       setData(data);
-      // return data;
     } catch (err) {
       console.error("err:", err);
       setError(

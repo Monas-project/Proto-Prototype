@@ -32,6 +32,7 @@ class GenerateRootNodeRequest(BaseModel):
     name: str
     owner_id: str
     signature: str
+    key: str
 
 class CreateNodeRequest(BaseModel):
     name: str
@@ -61,3 +62,4 @@ class ReEncryptRequest(BaseModel):
 class LoginRequest(BaseModel):
     address: str
     signature: str
+    key: Optional[str] = None

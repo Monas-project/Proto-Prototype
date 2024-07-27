@@ -4,7 +4,6 @@ import { getEnv } from "@/utils/getEnv";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
-import { filecoinCalibration } from "viem/chains";
 import { useAccount, useSignMessage } from "wagmi";
 import { ResponseData } from "./api/env";
 import { useSignUp } from "@/hooks/cryptree/useSignUp";
@@ -45,9 +44,11 @@ export default function Login() {
   }, [signMessageData, signUpData, loginData]);
 
   return (
-    <div className={`w-screen h-screen 
+    <div
+      className={`w-screen h-screen 
                     bg-HeroImageLight dark:bg-HeroImageDark bg-cover 
-                    text-Neutral-Foreground-1-Rest`}>
+                    text-Neutral-Foreground-1-Rest`}
+    >
       <div className="w-full h-full px-20 flex items-center">
         <div className="flex flex-col">
           {globalContext.loading ? (
@@ -130,8 +131,6 @@ export default function Login() {
                   }}
                 </ConnectButton.Custom>
               </div>
-
-
             </>
           )}
         </div>
