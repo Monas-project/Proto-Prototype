@@ -58,7 +58,6 @@ class ReEncryptRequest(BaseModel):
     target_cid: str # Re-encryptするノードのCID
     parent_subfolder_key: str # Re-encryptするノードの親ノードのサブフォルダキー
     parent_cid: str # Re-encryptするノードの親ノードのCID
-    root_key: str # ルートノードのキー
 
 class LoginRequest(BaseModel):
     address: str

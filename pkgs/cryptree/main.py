@@ -243,7 +243,7 @@ async def re_encrypt(request: ReEncryptRequest = Body(...), current_user: dict =
     # CryptreeNodeクラスのget_nodeメソッドを使って、Re-encryptするノードを取得
     target_node = CryptreeNode.get_node(request.target_cid, target_info.sk, ipfs_client)
     # Re-encrypt処理を実行
-    new_node = target_node.re_encrypt_and_update(parent_node, ipfs_client, request.root_key)
+    new_node = target_node.re_encrypt_and_update(parent_node, ipfs_client)
 
     root_id = current_user['root_id']
     new_root_id = RootIdStoreContract.get_root_id(current_user["address"])

@@ -338,8 +338,7 @@ export default function MyBox() {
         accessToken!,
         targetCid,
         currentNodeKey!,
-        currentNodeCid!,
-        rootKey!
+        currentNodeCid!
       );
 
       console.log("res:", res);
