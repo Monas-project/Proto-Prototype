@@ -211,7 +211,7 @@ class CryptreeNode(CryptreeNodeModel):
     def decrypt(key: str, data: bytes) -> bytes:
         return Fernet(key).decrypt(data)
 
-    def re_encrypt_and_update(self, parent_node: 'CryptreeNode', ipfs_client: Type[IpfsClient]) -> 'CryptreeNode':
+    def re_encrypt_and_update(self, parent_node: 'CryptreeNode', ipfs_client: Type[IpfsClient], root_key: str) -> 'CryptreeNode':
         # 指定したノードの更新前のsubfolder_keyを保持
         old_subfolder_key = self.subfolder_key
 
@@ -228,7 +228,7 @@ class CryptreeNode(CryptreeNodeModel):
         new_parent_cid = ipfs_client.add_bytes(enc_parent_metadata)
 
         # 親ノードおよびルートノードまでの先祖ノード全てのメタデータを更新
-        CryptreeNode.update_all_nodes(parent_node.metadata.owner_id, new_parent_cid, parent_node.subfolder_key, ipfs_client)
+        CryptreeNode.update_all_nodes(parent_node.metadata.owner_id, new_parent_cid, parent_node.subfolder_key, ipfs_client, root_key)
 
         return self
 
