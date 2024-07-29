@@ -12,8 +12,6 @@ type CreateNodeResponse = {
 };
 
 export const createNode = async (accessToken: string, formData: FormData) => {
-  console.log("formData:", formData);
-
   if (!formData) return;
   try {
     const res = await fetch(`${baseUrl}/api/create`, {
@@ -24,14 +22,11 @@ export const createNode = async (accessToken: string, formData: FormData) => {
       body: formData,
     });
 
-    console.log("res:", res);
-
     if (!res.ok) {
       throw new Error("Failed to Get Node");
     }
 
     const data = await res.json();
-    console.log("data:", data);
 
     return data;
   } catch (err) {

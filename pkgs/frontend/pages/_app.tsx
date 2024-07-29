@@ -7,7 +7,7 @@ import {
 } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
 import type { AppProps } from "next/app";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { WagmiProvider } from "wagmi";
 import { polygonAmoy } from "wagmi/chains";
 import "../styles/globals.css";
@@ -25,16 +25,17 @@ const queryClient = new QueryClient();
 function MyApp({ Component, pageProps }: AppProps) {
   const [env, setEnv] = useState<ResponseData>();
 
-  let wagmiConfig: any;
-
-  if (env != undefined) {
-    wagmiConfig = getDefaultConfig({
-      appName: "Monas",
-      // chains: process.env.NEXT_PUBLIC_ENABLE_TESTNETS ? [polygonAmoy] : [],
-      chains: [polygonAmoy],
-      projectId: env.WALLET_CONNECT_PROJECT_ID!,
-    });
-  }
+  const wagmiConfig: any = useMemo(
+    () =>
+      env &&
+      getDefaultConfig({
+        appName: "Monas",
+        // chains: process.env.NEXT_PUBLIC_ENABLE_TESTNETS ? [polygonAmoy] : [],
+        chains: [polygonAmoy],
+        projectId: env?.WALLET_CONNECT_PROJECT_ID!,
+      }),
+    [env]
+  );
 
   useEffect(() => {
     const init = async () => {

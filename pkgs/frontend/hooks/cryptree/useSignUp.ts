@@ -3,6 +3,8 @@ import * as dotenv from "dotenv";
 import "dotenv/config";
 import { useContext, useEffect, useState } from "react";
 import { useUserExists } from "./useUserExists";
+import { addKey, getKey, setupIndexedDB } from "@/utils/keyManagement";
+import { CryptoManager } from "@/utils/cryptoManager";
 
 dotenv.config();
 
@@ -32,21 +34,27 @@ export const useSignUp = (address: `0x${string}`, signature: `0x${string}`) => {
     if (!address || !signature) return;
 
     setLoading(true);
+    setupIndexedDB();
+    const cryptoManager = new CryptoManager();
+    const key = await cryptoManager.generateKey();
+    const exportedKey = window.btoa(
+      String.fromCharCode(...(await cryptoManager.exportKey(key)))
+    );
+
     try {
+      const body = JSON.stringify({
+        name: "Root",
+        owner_id: address,
+        signature,
+        key: exportedKey,
+      });
       const res = await fetch(`${baseUrl}/api/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          name: "Root",
-          owner_id: address,
-          signature,
-        }),
+        body,
       });
-
-      console.log("res:", res);
-      console.log("res.status:", res.status);
 
       const data = await res.json();
 
@@ -60,12 +68,15 @@ export const useSignUp = (address: `0x${string}`, signature: `0x${string}`) => {
       if (data.access_token) {
         setAccessToken(data.access_token);
       }
+      const rootId = data?.root_node?.root_id;
+      const rootKey = data?.root_node?.subfolder_key;
 
+      addKey(address, rootKey, rootId);
       setData(data);
-      setCurrentNodeCid(data?.root_node?.root_id);
-      setCurrentNodeKey(data?.root_node?.subfolder_key);
-      setRootId(data?.root_node?.root_id);
-      setRootKey(data?.root_node?.subfolder_key);
+      setCurrentNodeCid(rootId);
+      setCurrentNodeKey(rootKey);
+      setRootId(rootId);
+      setRootKey(rootKey);
     } catch (err) {
       console.error("err:", err);
       setError(
