@@ -87,41 +87,45 @@ class CryptreeNode(CryptreeNodeModel):
             cid=cid,
         )
     
+    # @classmethod
+    # def delete_node(cls, node_id: str, ipfs_client: Type[IpfsClient], root_key: str, parent: Optional['CryptreeNode'] = None):
+    #     # Search for the node
+    #     if parent is None:
+    #         raise ValueError("Root node cannot be deleted directly.")
+        
+    #     # Remove this node from the parent's child list
+    #     parent.metadata.children = [child for child in parent.metadata.children if child.cid != node_id]
+    #     print(parent.metadata.children)
+    #     # Upload and update the parent's metadata to IPFS
+    #     enc_metadata = cls.encrypt(parent.subfolder_key, parent.metadata.model_dump_json().encode())
+    #     parent.cid = ipfs_client.add_bytes(enc_metadata)
+        
+    #     # Reflect the parent's update to the root node
+    #     cls.update_all_nodes(
+    #         address=parent.metadata.owner_id,
+    #         new_cid=parent.cid,
+    #         target_subfolder_key=parent.subfolder_key,
+    #         ipfs_client=ipfs_client,
+    #         root_key=root_key
+    #     )
+
     @classmethod
-    def delete_node(cls, node_id: str, ipfs_client: Type[IpfsClient], root_key: str, parent: Optional['CryptreeNode'] = None):
-        # Search for the node
-        node_to_delete = cls.find_node(node_id, ipfs_client)
-        if not node_to_delete:
-            raise ValueError(f"Node with ID {node_id} not found")
-
+    def delete_node(
+        cls,
+        node_id: str,
+        ipfs_client: Type[IpfsClient],
+        root_key: str,
+        parent: Optional['CryptreeNode'] = None
+    ):
+        # Check if the parent is provided
         if parent is None:
-            raise ValueError("Root node cannot be deleted directly.")
-
+            raise ValueError("Parent node must be provided.")
         # Remove this node from the parent's child list
-        parent.metadata.children = [child for child in parent.metadata.children if child.cid != node_to_delete.cid]
-
-        # Upload and update the parent's metadata to IPFS
+        parent.metadata.children = [child for child in parent.metadata.children if child.cid != node_id]
+        # Encrypt and upload the updated parent metadata to IPFS
         enc_metadata = cls.encrypt(parent.subfolder_key, parent.metadata.model_dump_json().encode())
         parent.cid = ipfs_client.add_bytes(enc_metadata)
-
-        # If the node is a file, delete it from IPFS and exit
-        if node_to_delete.is_file:
-            # ipfs_client.remove(node_to_delete.cid)
-            # Reflect the parent's update to the root node
-            cls.update_all_nodes(
-                address=parent.metadata.owner_id,
-                new_cid=parent.cid,
-                target_subfolder_key=parent.subfolder_key,
-                ipfs_client=ipfs_client
-            )
-            return
-
-        # If the node is a directory, recursively delete its children
-        for child_info in node_to_delete.metadata.children:
-            child_node = cls.get_node(child_info.cid, child_info.sk, ipfs_client)
-            cls.delete_node(child_node.cid, ipfs_client, node_to_delete)
-
-        # Reflect the parent's update to the root node
+        # Reflect the parent's update to all nodes
         cls.update_all_nodes(
             address=parent.metadata.owner_id,
             new_cid=parent.cid,
@@ -130,31 +134,10 @@ class CryptreeNode(CryptreeNodeModel):
             root_key=root_key
         )
 
-    @classmethod
-    def find_node(cls, node_id: str, ipfs_client: Type[IpfsClient], root_key: str) -> Optional['CryptreeNode']:
-        if not node_id:
-            return None
-        try:
-            root_id = RootIdStoreContract.get_root_id(node_id)
-            return cls.get_node(root_id, root_key, ipfs_client)
-        except Exception as e:
-            return None
-    
+
     def encrypt_metadata(self) -> bytes:
         return CryptreeNode.encrypt(self.subfolder_key, self.metadata.model_dump_json().encode())
     
-    @classmethod
-    def find_parent(cls, node_id: str, root_node: 'CryptreeNode', ipfs_client: Type[IpfsClient]) -> Optional['CryptreeNode']:
-        # Recursive method to find the parent node of a child node
-        for child_info in root_node.metadata.children:
-            if child_info.cid == node_id:
-                return root_node
-            child_node = cls.get_node(child_info.cid, child_info.sk, ipfs_client)
-            parent = cls.find_parent(node_id, child_node, ipfs_client)
-            if parent:
-                return parent
-        return None
-
     @classmethod
     def update_all_nodes(cls, address: str, new_cid: str, target_subfolder_key: str, ipfs_client: Type[IpfsClient], root_key: str):
         # ルートノードのから下の階層に降りながら、該当のサブフォルダキーを持つノードを探し、新しいCIDに更新する

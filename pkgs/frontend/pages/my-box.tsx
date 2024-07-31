@@ -29,6 +29,7 @@ import { ResponseData } from "./api/env";
 import { useGetNode } from "@/hooks/cryptree/useGetNode";
 import { useRouter } from "next/router";
 import { createNode } from "@/cryptree/createNode";
+import { deleteNode } from "@/cryptree/delete";
 import FileUpload from "@/components/elements/FileUpload/FileUpload";
 import { downloadFile } from "@/utils/downloadFile";
 import { reEncryptNode } from "@/cryptree/reEncryptNode";
@@ -239,19 +240,32 @@ export default function MyBox() {
   /**
    * deleteFile function
    */
-  const deleteFile = async (cid: string) => {
+  const deleteFile = async (cid :string) => {
+    if (!address || !currentNodeCid || !currentNodeKey) return;
     try {
       globalContext.setLoading(true);
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/delete`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
+      // TODO call encrypt API from cryptree
+      // TODO call ipfs API from cryptree
+      // call same API when upload file & create folder
+      // call insert method
+      const formData = new FormData();
+      formData.append("cid", cid);
+      formData.append("subfolder_key", currentNodeKey!);
+      formData.append("root_key", rootKey!);
+      formData.append("parent_cid", currentNodeCid!);
+      const res = await deleteNode(accessToken!, formData);
+      setRootId(res.root_id);
+      setCurrentNodeCid(res.root_id);
+      setCurrentNodeKey(rootKey!);
+      setBreadcrumbItems([
+        {
+          text: "Own Space",
+          path: "/my-box",
+          cid: rootId!,
+          key: rootKey!,
         },
-        body: JSON.stringify({
-          node_id: cid,
-          root_key: rootKey!,
-        }),
-      });
+      ]);
+
       toast.success(
         "Delete File Success!! Please wait a moment until it is reflected.",
         {
@@ -625,7 +639,7 @@ export default function MyBox() {
                               headerIcon={<Delete20Regular />}
                               labelVisible={false}
                               onClick={async () => {
-                                await deleteFile(data.id);
+                                await deleteFile(getNodeData.metadata.children[i].cid);
                               }}
                             />
                             <Button
