@@ -240,7 +240,7 @@ export default function MyBox() {
   /**
    * deleteFile function
    */
-  const deleteFile = async (cid :string) => {
+  const deleteFile = async (cid: string) => {
     if (!address || !currentNodeCid || !currentNodeKey) return;
     try {
       globalContext.setLoading(true);
