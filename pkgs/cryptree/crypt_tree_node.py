@@ -86,28 +86,6 @@ class CryptreeNode(CryptreeNodeModel):
             subfolder_key=subfolder_key,
             cid=cid,
         )
-    
-    # @classmethod
-    # def delete_node(cls, node_id: str, ipfs_client: Type[IpfsClient], root_key: str, parent: Optional['CryptreeNode'] = None):
-    #     # Search for the node
-    #     if parent is None:
-    #         raise ValueError("Root node cannot be deleted directly.")
-        
-    #     # Remove this node from the parent's child list
-    #     parent.metadata.children = [child for child in parent.metadata.children if child.cid != node_id]
-    #     print(parent.metadata.children)
-    #     # Upload and update the parent's metadata to IPFS
-    #     enc_metadata = cls.encrypt(parent.subfolder_key, parent.metadata.model_dump_json().encode())
-    #     parent.cid = ipfs_client.add_bytes(enc_metadata)
-        
-    #     # Reflect the parent's update to the root node
-    #     cls.update_all_nodes(
-    #         address=parent.metadata.owner_id,
-    #         new_cid=parent.cid,
-    #         target_subfolder_key=parent.subfolder_key,
-    #         ipfs_client=ipfs_client,
-    #         root_key=root_key
-    #     )
 
     @classmethod
     def delete_node(
