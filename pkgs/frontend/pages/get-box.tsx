@@ -2,21 +2,30 @@ import Button from "@/components/elements/Button/Button";
 import LayoutMain from "@/components/layouts/Layout/LayoutMain";
 import Loading from "@/components/loading";
 import { GlobalContext } from "@/context/GlobalProvider";
-import { signer } from "@/hooks/useEthersProvider";
 import { getPushInfo } from "@/hooks/usePushProtocol";
 import { ListInfo } from "@/utils/type";
+import { walletClient } from "@/utils/wagmiConfig";
 import { CheckboxUnchecked24Regular } from "@fluentui/react-icons";
 import { useContext, useEffect, useState } from "react";
+import { ResponseData } from "./api/env";
+import { toHex } from "viem";
+import { getEnv } from "@/utils/getEnv";
 
 export default function GetBox() {
   const [pushList, setPushList] = useState<ListInfo[]>([]);
   const globalContext = useContext(GlobalContext);
+  const [env, setEnv] = useState<ResponseData>();
 
   useEffect(() => {
     const init = async () => {
       globalContext.setLoading(true);
-      if (signer != undefined) {
-        const list = await getPushInfo(signer);
+      if (env == undefined) {
+        const envData = await getEnv();
+        setEnv(envData);
+      }
+      if (env != undefined) {
+        const client = walletClient(toHex(env.PUSH_PROTOCOL_PRIVATE_KEY!));
+        const list = await getPushInfo(client);
         setPushList(list);
       }
       globalContext.setLoading(false);
@@ -27,25 +36,21 @@ export default function GetBox() {
   return (
     <LayoutMain>
       <div className="bg-Neutral-Background-2-Rest h-full w-full flex flex-col text-Neutral-Foreground-1-Rest overflow-y-auto">
-
         {globalContext.loading ? (
           <Loading />
         ) : (
           <>
-
             <div className="flex flex-col space-y-4 p-6 shadow-Elevation01-Light dark:shadow-Elevation01-Dark sticky top-0 bg-Neutral-Background-2-Rest">
               <div className="flex flex-row justify-between items-center">
                 <div className="text-TitleLarge">Get Box</div>
               </div>
               <div className="flex flex-row justify-between items-center">
                 <div className="flex flex-row space-x-4">
-                  <Button fotterVisible={true} label="Type"/>
-                  <Button fotterVisible={true} label="People"/>
-                  <Button fotterVisible={true} label="Modified"/>
+                  <Button fotterVisible={true} label="Type" />
+                  <Button fotterVisible={true} label="People" />
+                  <Button fotterVisible={true} label="Modified" />
                 </div>
-                <div className="flex flex-row space-x-4">
-                  
-                </div>
+                <div className="flex flex-row space-x-4"></div>
               </div>
             </div>
 

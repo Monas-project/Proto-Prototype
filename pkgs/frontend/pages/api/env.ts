@@ -5,6 +5,7 @@ export type ResponseData = {
   POLYGON_AMOY_RPC_URL: string;
   PUSH_PROTOCOL_PRIVATE_KEY: string;
   SECRET_MESSAGE: string;
+  SEPOLIA_RPC_URL: string;
 };
 
 export default function handler(
@@ -16,6 +17,7 @@ export default function handler(
     POLYGON_AMOY_RPC_URL: process.env.POLYGON_AMOY_RPC_URL!,
     PUSH_PROTOCOL_PRIVATE_KEY: process.env.PUSH_PROTOCOL_PRIVATE_KEY!,
     SECRET_MESSAGE: process.env.SECRET_MESSAGE!,
+    SEPOLIA_RPC_URL: process.env.SEPOLIA_RPC_URL!,
   };
 
   res.status(200).json(env);

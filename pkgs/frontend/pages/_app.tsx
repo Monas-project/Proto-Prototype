@@ -14,6 +14,7 @@ import "../styles/globals.css";
 import { ResponseData } from "./api/env";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import DarkMode from "@/components/layouts/DarkMode/DarkMode";
+import { wagmiConfig } from "@/utils/wagmiConfig";
 
 /**
  * MyApp Component
@@ -25,15 +26,8 @@ const queryClient = new QueryClient();
 function MyApp({ Component, pageProps }: AppProps) {
   const [env, setEnv] = useState<ResponseData>();
 
-  const wagmiConfig: any = useMemo(
-    () =>
-      env &&
-      getDefaultConfig({
-        appName: "Monas",
-        // chains: process.env.NEXT_PUBLIC_ENABLE_TESTNETS ? [polygonAmoy] : [],
-        chains: [polygonAmoy],
-        projectId: env?.WALLET_CONNECT_PROJECT_ID!,
-      }),
+  const config: any = useMemo(
+    () => env && wagmiConfig(env.WALLET_CONNECT_PROJECT_ID),
     [env]
   );
 
@@ -49,7 +43,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       {env != undefined && (
-        <WagmiProvider config={wagmiConfig} reconnectOnMount={true}>
+        <WagmiProvider config={config} reconnectOnMount={true}>
           <QueryClientProvider client={queryClient}>
             <RainbowKitProvider
               coolMode={true}

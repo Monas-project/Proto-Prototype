@@ -4,7 +4,7 @@ import {
   RPC_URL,
   TABLE_NAME,
 } from "@/utils/constants";
-import { Database } from "@tableland/sdk";
+
 import { Contract, ethers } from "ethers";
 
 // table schema

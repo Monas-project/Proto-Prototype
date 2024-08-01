@@ -5,11 +5,7 @@ import Input from "@/components/elements/Input/Input";
 import LayoutMain from "@/components/layouts/Layout/LayoutMain";
 import Loading from "@/components/loading";
 import { GlobalContext } from "@/context/GlobalProvider";
-import {
-  TableData,
-  getSelectedTableData,
-  insertTableData,
-} from "@/hooks/useContract";
+import { TableData } from "@/hooks/useContract";
 import { sendNotification } from "@/hooks/usePushProtocol";
 import {
   ArrowDownload20Regular,
@@ -138,8 +134,6 @@ export default function MyBox() {
           key: rootKey!,
         },
       ]);
-      // call insert method
-      await insertTableData(res.root_id, res.cid);
 
       toast.success(
         "Upload Success!! Please wait a moment until it is reflected.",
@@ -201,11 +195,6 @@ export default function MyBox() {
           key: rootKey!,
         },
       ]);
-
-      // fileの場合は、file_dataにデータが入る
-      if (res.metadata.children.length > 0 && res.metadata.children[0].fk) {
-        await insertTableData(res.root_id, res.cid);
-      }
 
       toast.success(
         "CreateFolder Success!! Please wait a moment until it is reflected.",
@@ -302,12 +291,7 @@ export default function MyBox() {
   const shareFile = async () => {
     try {
       globalContext.setLoading(true);
-      // TODO get key value by calling cryptree API
-
       console.log("to:", to);
-      // get selectedId's table data
-      const results: TableData[] = await getSelectedTableData(isSelectedId);
-      console.log("results[0]:", results[0]);
       // call sendNotification method
       await sendNotification(to, sharingData?.cid, sharingData?.key, rootId!);
 
@@ -640,7 +624,9 @@ export default function MyBox() {
                               headerIcon={<Delete20Regular />}
                               labelVisible={false}
                               onClick={async () => {
-                                await deleteFile(getNodeData.metadata.children[i].cid);
+                                await deleteFile(
+                                  getNodeData.metadata.children[i].cid
+                                );
                               }}
                             />
                             <Button

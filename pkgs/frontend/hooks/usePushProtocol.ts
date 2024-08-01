@@ -13,7 +13,7 @@ const createSignerForPushProtocol = async () => {
   // create signer & provider object
   const signer = new ethers.Wallet(env.PUSH_PROTOCOL_PRIVATE_KEY);
 
-  const provider = new ethers.JsonRpcProvider(env.POLYGON_AMOY_RPC_URL);
+  const provider = new ethers.JsonRpcProvider(env.SEPOLIA_RPC_URL);
   // connect
   await signer.connect(provider);
   return signer;
@@ -71,9 +71,9 @@ export const getPushInfo = async (signer: SignerType) => {
  */
 export const sendNotification = async (
   to: string,
-  cid: any,
-  key: any,
-  fileInfo: any
+  cid: string,
+  key: string,
+  rootId: string
 ) => {
   // init PushSDK
   const signer = await createSignerForPushProtocol();
@@ -87,7 +87,7 @@ export const sendNotification = async (
 
           CID: ${cid}
           Key: ${key}
-          FileInfo: ${fileInfo}
+          RootId: ${rootId}
           
         `,
     },
