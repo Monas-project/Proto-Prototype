@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "private": true,
   "main": "index.js",
-  "repository": "https://github.com/ShapeProject/circuit_breaker.git",
-  "author": "Haruki Kondo",
+  "repository": "https://github.com/Monas-project/Proto-Prototype.git",
+  "author": "Monas",
   "license": "MIT",
   "scripts": {
-    "backend": "yarn workspace backend",
-    "frontend": "yarn workspace frontend"
+    "contract": "yarn workspace @pkgs/contract",
+    "frontend": "yarn workspace @pkgs/frontend"
   },
   "workspaces": [
     "pkgs/*"

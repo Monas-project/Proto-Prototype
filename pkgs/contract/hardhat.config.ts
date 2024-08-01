@@ -1,16 +1,13 @@
-import "@nomicfoundation/hardhat-chai-matchers";
+import { HardhatUserConfig } from "hardhat/types";
 import "@nomicfoundation/hardhat-toolbox";
-import "@openzeppelin/hardhat-upgrades";
-import "@tableland/hardhat";
+import "@nomicfoundation/hardhat-ignition-ethers";
 import * as dotenv from "dotenv";
-import "dotenv/config";
 import fs from "fs";
-import "hardhat-dependency-compiler";
-import { HardhatUserConfig } from "hardhat/config";
 import path from "path";
+import "@typechain/hardhat";
 dotenv.config();
 
-const { PRIVATE_KEY, GAS_REPORT, COINMARKETCAP_API_KEY } = process.env;
+const { PRIVATE_KEY, GAS_REPORT, POLYGON_AMOY_RPC_URL } = process.env;
 
 const HARDHAT_CHAINID = 31337;
 const DEFAULT_BLOCK_GAS_LIMIT = 30000000;
@@ -18,7 +15,7 @@ const GWEI = 1000 * 1000 * 1000;
 
 const SKIP_LOAD = process.env.SKIP_LOAD === "true";
 if (!SKIP_LOAD) {
-  const taskPaths = ["mock", "table"];
+  const taskPaths = ["mock"];
   taskPaths.forEach((folder) => {
     const tasksPath = path.join(__dirname, "tasks", folder);
     fs.readdirSync(tasksPath)
@@ -39,9 +36,6 @@ const config: HardhatUserConfig = {
       },
     },
   },
-  dependencyCompiler: {
-    paths: ["@tableland/evm/contracts/TablelandTables.sol"],
-  },
   networks: {
     hardhat: {
       blockGasLimit: DEFAULT_BLOCK_GAS_LIMIT,
@@ -51,23 +45,10 @@ const config: HardhatUserConfig = {
       throwOnCallFailures: true,
       allowUnlimitedContractSize: true,
     },
-    filecoinCalibration: {
-      url: "https://api.calibration.node.glif.io/rpc/v1" || "",
-      accounts: PRIVATE_KEY !== undefined ? [PRIVATE_KEY] : [],
+    polygonAmoy: {
+      url: POLYGON_AMOY_RPC_URL,
+      accounts: PRIVATE_KEY ? [PRIVATE_KEY] : [],
     },
-  },
-  gasReporter: {
-    enabled: GAS_REPORT ? true : false,
-    currency: "JPY",
-    gasPrice: 20,
-    token: "ETH",
-    coinmarketcap: COINMARKETCAP_API_KEY,
-    gasPriceApi:
-      "https://api.etherscan.io/api?module=proxy&action=eth_gasPrice",
-  },
-  localTableland: {
-    silent: false,
-    verbose: false,
   },
 };
 
