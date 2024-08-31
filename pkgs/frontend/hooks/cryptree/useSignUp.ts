@@ -3,8 +3,9 @@ import * as dotenv from "dotenv";
 import "dotenv/config";
 import { useContext, useEffect, useState } from "react";
 import { useUserExists } from "./useUserExists";
-import { addKey, getKey, setupIndexedDB } from "@/utils/keyManagement";
+import { addKey, setupIndexedDB } from "@/utils/keyManagement";
 import { CryptoManager } from "@/utils/cryptoManager";
+import { saveFcmToken } from "@/utils/firebase";
 
 dotenv.config();
 
@@ -93,6 +94,7 @@ export const useSignUp = (address: `0x${string}`, signature: `0x${string}`) => {
     }
     console.log("useEffect: useSignUp");
     signUp();
+    saveFcmToken(address);
   }, [userExistsData, accessToken]);
 
   return { signUp, data, loading, error };

@@ -10,7 +10,6 @@ import {
   getSelectedTableData,
   insertTableData,
 } from "@/hooks/useContract";
-import { sendNotification } from "@/hooks/usePushProtocol";
 import {
   ArrowDownload20Regular,
   Delete20Regular,
@@ -24,7 +23,7 @@ import {
 import { useContext, useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useAccount } from "wagmi";
+import { useAccount, useConfig } from "wagmi";
 import { ResponseData } from "./api/env";
 import { useGetNode } from "@/hooks/cryptree/useGetNode";
 import { useRouter } from "next/router";
@@ -35,6 +34,7 @@ import { downloadFile } from "@/utils/downloadFile";
 import { reEncryptNode } from "@/cryptree/reEncryptNode";
 import Breadcrumb from "@/components/elements/Breadcrumb/Breadcrumb";
 import According from "@/components/elements/According/According";
+import { initializeFirebaseMessaging, sendMessage } from "@/utils/firebase";
 
 const fileTableTr = [
   { th: "Name", width: 55, mWidth: 300 },
@@ -47,7 +47,6 @@ export default function MyBox() {
   const [isSelected, setIsSelected] = useState<boolean>(false);
   const [isSelectedId, setIsSelectedId] = useState<any>(0);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
-  const [tableDatas, setTableDatas] = useState<TableData[]>();
   const [to, setTo] = useState<any>();
   const [env, setEnv] = useState<ResponseData>();
   const router = useRouter();
@@ -55,7 +54,8 @@ export default function MyBox() {
   const [sharingData, setSharingData] = useState<any>(null);
 
   const globalContext = useContext(GlobalContext);
-  const { address, isConnected } = useAccount();
+  const config = useConfig();
+  const { address, isConnected } = useAccount({ config });
   const {
     rootId,
     rootKey,
@@ -300,16 +300,19 @@ export default function MyBox() {
    * shareFile function
    */
   const shareFile = async () => {
+    if (!address || !to || !sharingData) return;
     try {
       globalContext.setLoading(true);
-      // TODO get key value by calling cryptree API
-
       console.log("to:", to);
-      // get selectedId's table data
-      const results: TableData[] = await getSelectedTableData(isSelectedId);
-      console.log("results[0]:", results[0]);
-      // call sendNotification method
-      await sendNotification(to, sharingData?.cid, sharingData?.key, rootId!);
+
+      const message = `
+          This is a test Notification!!!!!!
+
+          CID: ${sharingData?.cid}
+          Key: ${sharingData?.key}
+          RootId: ${rootId}
+        `;
+      await sendMessage(address, to, message);
 
       toast.success(
         "Share File Success!! Please wait a moment until it is reflected.",
@@ -438,9 +441,7 @@ export default function MyBox() {
       globalContext.setLoading(true);
       try {
         console.log("getNodeData:", getNodeData);
-        const children = getNodeData?.children;
-        const datas = children;
-        setTableDatas(datas);
+        initializeFirebaseMessaging();
       } catch (err) {
         console.error("err", err);
       } finally {
@@ -640,7 +641,9 @@ export default function MyBox() {
                               headerIcon={<Delete20Regular />}
                               labelVisible={false}
                               onClick={async () => {
-                                await deleteFile(getNodeData.metadata.children[i].cid);
+                                await deleteFile(
+                                  getNodeData.metadata.children[i].cid
+                                );
                               }}
                             />
                             <Button

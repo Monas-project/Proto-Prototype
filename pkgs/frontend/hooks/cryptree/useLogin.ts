@@ -11,6 +11,7 @@ import {
 } from "@/utils/keyManagement";
 import { CryptoManager } from "@/utils/cryptoManager";
 import { useSignUp } from "./useSignUp";
+import { saveFcmToken, sendMessage } from "@/utils/firebase";
 
 dotenv.config();
 const baseUrl: string = process.env.CRYPTREE_API_URL || "http://localhost:8000";
@@ -119,6 +120,7 @@ export const useLogin = (address: `0x${string}`, signature: `0x${string}`) => {
     }
     console.log("useEffect: useLogin");
     login();
+    saveFcmToken(address);
   }, [userExistsData, accessToken]);
 
   return { data, login, loading, error };

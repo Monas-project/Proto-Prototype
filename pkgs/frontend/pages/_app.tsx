@@ -30,7 +30,6 @@ function MyApp({ Component, pageProps }: AppProps) {
       env &&
       getDefaultConfig({
         appName: "Monas",
-        // chains: process.env.NEXT_PUBLIC_ENABLE_TESTNETS ? [polygonAmoy] : [],
         chains: [polygonAmoy],
         projectId: env?.WALLET_CONNECT_PROJECT_ID!,
       }),

@@ -46,8 +46,6 @@ export default function SharedBox() {
       const res = await getBox(accessToken!, subfolderKey, cid);
       setNode(res);
       setLoading(false);
-      console.log("resaaa");
-      console.log(res);
     } catch (err) {
       console.error("err:", err);
     } finally {
@@ -61,17 +59,17 @@ export default function SharedBox() {
 
   const handleCloseButton = () => {
     setIsGetBoxModalOpen(false);
-    setCid('');
-    setSubfolderKey('');
+    setCid("");
+    setSubfolderKey("");
   };
 
   useEffect(() => {
-    if (cid.trim() === '' || subfolderKey.trim() === '') {
+    if (cid.trim() === "" || subfolderKey.trim() === "") {
       setIsButtonDisabled(true);
     } else {
       setIsButtonDisabled(false);
     }
-  }, [cid, subfolderKey])
+  }, [cid, subfolderKey]);
 
   return (
     <LayoutMain>
@@ -106,11 +104,16 @@ export default function SharedBox() {
         <div className="w-full grow flex flex-col p-6 space-y-6">
           <div className="grow rounded-lg px-6 bg-Neutral-Background-1-Rest">
             <table className="w-full inline-block">
-
               <thead className="flex border-b border-Neutral-Stroke-1-Rest text-TitleSmall text-Neutral-Foreground-Variant-Rest">
                 <tr className="w-full h-fit flex flex-row space-x-8 px-6 py-4 text-left [&_th]:p-0 [&_th]:font-medium">
                   {fileTableTr.map((x) => (
-                    <th key={x.th} style={{ width: `${x.width}%`, minWidth: `${x.mWidth}px` }}>
+                    <th
+                      key={x.th}
+                      style={{
+                        width: `${x.width}%`,
+                        minWidth: `${x.mWidth}px`,
+                      }}
+                    >
                       {x.th}
                     </th>
                   ))}
@@ -122,17 +125,18 @@ export default function SharedBox() {
                   <tr
                     onClick={() => setIsSelected(!isSelected)}
                     className={`w-full flex flex-row pl-8 py-3 space-x-8 border-b border-NV150 text-BodyLarge text-NV10 items-center group 
-                                            ${isSelected
-                        ? "bg-N70"
-                        : "bg-N96 hover:bg-N90"
-                      }
+                                            ${
+                                              isSelected
+                                                ? "bg-N70"
+                                                : "bg-N96 hover:bg-N90"
+                                            }
                         [&>td]:flex`}
                   >
                     <td
                       style={{ width: `${fileTableTr[0].width}%` }}
                       className="flex flex-row items-center space-x-6"
                     >
-                      <FileFormatIcon fileType='DocumentIcon' />
+                      <FileFormatIcon fileType="DocumentIcon" />
                       <div>{node.metadata.name}</div>
                     </td>
                     <td style={{ width: `${fileTableTr[1].width}%` }}>
@@ -155,8 +159,9 @@ export default function SharedBox() {
                       className="space-x-5 pr-8 justify-end items-center"
                     >
                       <div
-                        className={`space-x-3 flex-row group-hover:flex ${isSelected ? "flex" : "hidden"
-                          }`}
+                        className={`space-x-3 flex-row group-hover:flex ${
+                          isSelected ? "flex" : "hidden"
+                        }`}
                       >
                         <Button
                           layout="subtle"
@@ -184,15 +189,26 @@ export default function SharedBox() {
         {/* GetBox Button Dialog */}
         {isGetBoxModalOpen && (
           <div
-            onClick={(e) => e.target === e.currentTarget && setIsGetBoxModalOpen(false)}
+            onClick={(e) =>
+              e.target === e.currentTarget && setIsGetBoxModalOpen(false)
+            }
             className="fixed top-0 left-0 right-0 bottom-0 bg-Neutral-Background-Overlay-Rest"
           >
             <Dialog
-              primaryButtonProps={{ label: 'Receive', onClick: receive, disabled: isButtonDisabled, }}
-              secondaryButtonProps={{ label: 'Close', onClick: handleCloseButton, }}
+              primaryButtonProps={{
+                label: "Receive",
+                onClick: receive,
+                disabled: isButtonDisabled,
+              }}
+              secondaryButtonProps={{
+                label: "Close",
+                onClick: handleCloseButton,
+              }}
             >
               <div className="py-6 text-center">
-                <span className="text-TitleLarge text-Neutral-Foreground-1-Rest">Get Box</span>
+                <span className="text-TitleLarge text-Neutral-Foreground-1-Rest">
+                  Get Box
+                </span>
               </div>
               <div className="space-y-4">
                 <Input
