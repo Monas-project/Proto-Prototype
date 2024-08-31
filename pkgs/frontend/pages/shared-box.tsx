@@ -105,9 +105,9 @@ export default function SharedBox() {
 
         <div className="w-full grow flex flex-col p-6 space-y-6">
           <div className="grow rounded-lg px-6 bg-Neutral-Background-1-Rest">
-            <table className="w-full inline-block">
+            <table className="w-full">
 
-              <thead className="flex border-b border-Neutral-Stroke-1-Rest text-TitleSmall text-Neutral-Foreground-Variant-Rest">
+              <thead className="border-b border-Neutral-Stroke-1-Rest text-TitleSmall text-Neutral-Foreground-Variant-Rest">
                 <tr className="w-full h-fit flex flex-row space-x-8 px-6 py-4 text-left [&_th]:p-0 [&_th]:font-medium">
                   {fileTableTr.map((x) => (
                     <th key={x.th} style={{ width: `${x.width}%`, minWidth: `${x.mWidth}px` }}>
@@ -121,13 +121,8 @@ export default function SharedBox() {
                 {node ? (
                   <tr
                     onClick={() => setIsSelected(!isSelected)}
-                    className={`w-full flex flex-row pl-8 py-3 space-x-8 border-b border-NV150 text-BodyLarge text-NV10 items-center group 
-                                            ${isSelected
-                        ? "bg-N70"
-                        : "bg-N96 hover:bg-N90"
-                      }
-                        [&>td]:flex`}
-                  >
+                    className={`w-full flex flex-row px-6 py-2.5 space-x-8 border-b border-Neutral-Stroke-1-Rest text-BodyLarge items-center group 
+                                    ${isSelected ? "bg-Neutral-Background-1-Pressed" : "bg-Neutral-Background-1-Rest hover:bg-Neutral-Background-1-Hover"} [&>td]:flex [&>td]:p-0`}>
                     <td
                       style={{ width: `${fileTableTr[0].width}%` }}
                       className="flex flex-row items-center space-x-6"
@@ -150,14 +145,8 @@ export default function SharedBox() {
                         " " +
                         new Date(node.metadata.created_at).toLocaleTimeString()}
                     </td>
-                    <td
-                      style={{ width: `${fileTableTr[3].width}%` }}
-                      className="space-x-5 pr-8 justify-end items-center"
-                    >
-                      <div
-                        className={`space-x-3 flex-row group-hover:flex ${isSelected ? "flex" : "hidden"
-                          }`}
-                      >
+                    <td style={{ width: `${fileTableTr[3].width}%` }} className="space-x-5 justify-end items-center">
+                      <div className={`space-x-3 flex flex-row group-hover:flex ${isSelected ? "flex" : "hidden"}`}>
                         <Button
                           layout="subtle"
                           headerVisible={true}
@@ -172,7 +161,12 @@ export default function SharedBox() {
                           labelVisible={false}
                         />
                       </div>
-                      <MoreVertical16Regular />
+                      <Button
+                        layout="subtle"
+                        headerVisible={true}
+                        headerIcon={<MoreVertical16Regular />}
+                        labelVisible={false}
+                      />
                     </td>
                   </tr>
                 ) : null}

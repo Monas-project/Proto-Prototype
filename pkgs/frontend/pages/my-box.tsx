@@ -37,6 +37,8 @@ import { downloadFile } from "@/utils/downloadFile";
 import { reEncryptNode } from "@/cryptree/reEncryptNode";
 import Breadcrumb from "@/components/elements/Breadcrumb/Breadcrumb";
 import According from "@/components/elements/According/According";
+import Dialog from "@/components/elements/Dialog/Dialog";
+import FileList from "@/components/layouts/FileList/FileList";
 
 const fileTableTr = [
   { th: "Name", width: 55, mWidth: 300 },
@@ -49,6 +51,7 @@ export default function MyBox() {
   const [isSelected, setIsSelected] = useState<boolean>(false);
   const [isSelectedId, setIsSelectedId] = useState<any>(0);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [isCreateFolderModalOpen, setIsCreateFolderModalOpen] = useState(false);
   const [tableDatas, setTableDatas] = useState<TableData[]>();
   const [to, setTo] = useState<any>();
   const [env, setEnv] = useState<ResponseData>();
@@ -69,10 +72,39 @@ export default function MyBox() {
     currentNodeKey,
     setCurrentNodeKey,
   } = globalContext;
-  const { data: getNodeData, error: getNodeError } = useGetNode(
-    currentNodeKey!,
-    currentNodeCid!
-  );
+  // const { data: getNodeData, error: getNodeError } = useGetNode(
+  //   currentNodeKey!,
+  //   currentNodeCid!
+  // );
+
+  const getNodeData = {
+    metadata: {
+      children: [
+        {
+          metadata: {
+            name: "test",
+            owner_id: "0x12345678901234567890",
+            created_at: "2024-01-01 00:00:00",
+            children: [],
+          },
+          file_data: "test",
+          cid: "QmZ4tDuvesekSs4qM5ZBKpXiZGun7S2CYtEZRB3DYXkjGx",
+        },
+      ],
+    },
+    children: [
+      {
+        metadata: {
+          name: "test",
+          owner_id: "0x12345678901234567890",
+          created_at: "2024-01-01 00:00:00",
+          children: [],
+        },
+        file_data: "test",
+        cid: "QmZ4tDuvesekSs4qM5ZBKpXiZGun7S2CYtEZRB3DYXkjGx",
+      },
+    ],
+  };
 
   const [breadcrumbItems, setBreadcrumbItems] = useState<any[]>([
     {
@@ -182,6 +214,7 @@ export default function MyBox() {
    * createFolder function
    */
   const createFolder = async () => {
+    setIsCreateFolderModalOpen(true);
     if (!address || !currentNodeCid || !currentNodeKey) return;
     try {
       globalContext.setLoading(true);
@@ -488,9 +521,9 @@ export default function MyBox() {
               </According>
 
               <div className="grow rounded-lg px-6 bg-Neutral-Background-1-Rest">
-                <table className="w-full inline-block">
+                <table className="w-full">
 
-                  <thead className="flex border-b border-Neutral-Stroke-1-Rest text-TitleSmall text-Neutral-Foreground-Variant-Rest">
+                  <thead className="border-b border-Neutral-Stroke-1-Rest text-TitleSmall text-Neutral-Foreground-Variant-Rest">
                     <tr className="w-full h-fit flex flex-row space-x-8 px-6 py-4 text-left [&_th]:p-0 [&_th]:font-medium">
                       {fileTableTr.map((x) => (
                         <th key={x.th} style={{ width: `${x.width}%`, minWidth: `${x.mWidth}px` }}>
@@ -502,8 +535,7 @@ export default function MyBox() {
 
                   <tbody className="flex flex-col w-full last:[&>tr]:border-none">
                     {getNodeData?.children?.map((data: any, i) => (
-                      <tr
-                        key={i}
+                      <tr key={i}
                         onClick={() => {
                           setIsSelected(!isSelected);
                           setIsSelectedId(getNodeData.metadata.children[i].cid);
@@ -515,13 +547,8 @@ export default function MyBox() {
                             data.subfolder_key
                           )
                         }
-                        className={`w-full flex flex-row pl-8 py-3 space-x-8 border-b border-NV150 text-BodyLarge text-NV10 items-center group 
-                                              ${isSelected
-                            ? "bg-N70"
-                            : "bg-N96 hover:bg-N90"
-                          }
-                                              [&>td]:flex`}
-                      >
+                        className={`w-full flex flex-row px-6 py-2.5 space-x-8 border-b border-Neutral-Stroke-1-Rest text-BodyLarge items-center group 
+                                    ${isSelected ? "bg-Neutral-Background-1-Pressed" : "bg-Neutral-Background-1-Rest hover:bg-Neutral-Background-1-Hover"} [&>td]:flex [&>td]:p-0`}>
                         <td
                           style={{ width: `${fileTableTr[0].width}%` }}
                           className="flex flex-row items-center space-x-6"
@@ -531,7 +558,7 @@ export default function MyBox() {
                           ) : (
                             <FileFormatIcon fileType='FolderIcon' />
                           )}
-                          <div className="ml-4">{data.metadata.name}</div>
+                          <div>{data.metadata.name}</div>
                         </td>
                         <td style={{ width: `${fileTableTr[1].width}%` }}>
                           {data.metadata.owner_id.slice(0, 6) +
@@ -547,14 +574,8 @@ export default function MyBox() {
                               data.metadata.created_at
                             ).toLocaleTimeString()}
                         </td>
-                        <td
-                          style={{ width: `${fileTableTr[3].width}%` }}
-                          className="space-x-5 pr-8 justify-end items-center"
-                        >
-                          <div
-                            className={`space-x-3 flex-row group-hover:flex ${isSelected ? "flex" : "hidden"
-                              }`}
-                          >
+                        <td style={{ width: `${fileTableTr[3].width}%` }} className="space-x-5 justify-end items-center">
+                          <div className={`space-x-3 flex flex-row group-hover:flex ${isSelected ? "flex" : "hidden"}`}>
                             {data.file_data && data.file_data.length > 0 ? (
                               <Button
                                 layout="subtle"
@@ -564,9 +585,13 @@ export default function MyBox() {
                                 onClick={() =>
                                   download(data.file_data, data.metadata.name)
                                 }
-                              ></Button>
+                              />
                             ) : null}
                             <Button
+                              layout="subtle"
+                              headerVisible={true}
+                              headerIcon={<Share20Regular />}
+                              labelVisible={false}
                               onClick={() => {
                                 const key = getNodeData?.metadata.children[i].fk
                                   ? getNodeData?.metadata.children[i].fk
@@ -576,10 +601,6 @@ export default function MyBox() {
                                   key
                                 );
                               }}
-                              layout="subtle"
-                              headerVisible={true}
-                              headerIcon={<Share20Regular />}
-                              labelVisible={false}
                             />
                             <Button
                               layout="subtle"
@@ -600,10 +621,16 @@ export default function MyBox() {
                               }
                             />
                           </div>
-                          <MoreVertical16Regular />
+                          <Button
+                            layout="subtle"
+                            headerVisible={true}
+                            headerIcon={<MoreVertical16Regular />}
+                            labelVisible={false}
+                          />
                         </td>
                       </tr>
                     ))}
+
                   </tbody>
                 </table>
               </div>
@@ -611,6 +638,7 @@ export default function MyBox() {
           </>
         )}
 
+        {/* Upload File Button Dialog */}
         {isFileUploadModalOpen && (
           <div
             onClick={(e) => e.target === e.currentTarget && setIsFileUploadModalOpen(false)}
@@ -621,6 +649,32 @@ export default function MyBox() {
               uploadFile={uploadFile}
               close={() => setIsFileUploadModalOpen(false)}
             />
+          </div>
+        )}
+
+        {/* Create Folder Button Dialog */}
+        {isCreateFolderModalOpen && (
+          <div
+            onClick={(e) => e.target === e.currentTarget && setIsCreateFolderModalOpen(false)}
+            className="fixed top-0 left-0 right-0 bottom-0 bg-Neutral-Background-Overlay-Rest"
+          >
+            <Dialog
+              primaryButtonProps={{ label: 'Create' }}
+              secondaryButtonProps={{ label: 'Cancel', onClick: () => setIsCreateFolderModalOpen(false) }}
+            >
+              <div className="py-6 text-center">
+                <span className="text-TitleLarge text-Neutral-Foreground-1-Rest">Create Folder</span>
+              </div>
+              <div className="space-y-4">
+                <Input
+                  id="folderName"
+                  label="New folder name"
+                  // inputValue={folderName}
+                  layout="filledDarker"
+                  placeholder="new folder"
+                />
+              </div>
+            </Dialog>
           </div>
         )}
 
