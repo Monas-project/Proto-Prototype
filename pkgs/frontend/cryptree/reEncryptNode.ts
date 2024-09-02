@@ -8,7 +8,8 @@ export const reEncryptNode = async (
   accessToken: string,
   target_cid: string,
   parent_subfolder_key: string,
-  parent_cid: string
+  parent_cid: string,
+  root_key: string
 ) => {
   if (!target_cid || !parent_subfolder_key || !parent_cid) return;
   try {
@@ -22,17 +23,15 @@ export const reEncryptNode = async (
         target_cid,
         parent_subfolder_key,
         parent_cid,
+        root_key,
       }),
     });
-
-    console.log("res:", res);
 
     if (!res.ok) {
       throw new Error("Failed to Get Node");
     }
 
     const data = await res.json();
-    console.log("data:", data);
 
     return data;
   } catch (err) {

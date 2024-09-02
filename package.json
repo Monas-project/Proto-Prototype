@@ -15,7 +15,6 @@
   ],
   "dependencies": {
     "@fluentui/react-icons": "^2.0.232",
-    "@lottiefiles/react-lottie-player": "^3.5.4",
-    "@tableland/evm": "^5.0.0"
+    "@lottiefiles/react-lottie-player": "^3.5.4"
   }
 }

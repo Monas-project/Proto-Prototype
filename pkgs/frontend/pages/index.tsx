@@ -1,21 +1,19 @@
 import Loading from "@/components/loading";
 import { GlobalContext } from "@/context/GlobalProvider";
-import { useEthersSigner } from "@/hooks/useEthersProvider";
 import { getEnv } from "@/utils/getEnv";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
-import { filecoinCalibration } from "viem/chains";
 import { useAccount, useSignMessage } from "wagmi";
 import { ResponseData } from "./api/env";
 import { useSignUp } from "@/hooks/cryptree/useSignUp";
 import { useLogin } from "@/hooks/cryptree/useLogin";
 
 export default function Login() {
+  const [routePushed, setRoutePushed] = useState(false);
   const [env, setEnv] = useState<ResponseData>();
   const account = useAccount();
   const router = useRouter();
-  const signer = useEthersSigner({ chainId: filecoinCalibration.id });
   const globalContext = useContext(GlobalContext);
   const { data: signMessageData, signMessageAsync } = useSignMessage();
   const { data: signUpData } = useSignUp(account?.address!, signMessageData!);
@@ -39,17 +37,22 @@ export default function Login() {
 
   useEffect(() => {
     console.log("signMessageData:", signMessageData);
+    console.log("routePushed:", routePushed);
     if (signMessageData) {
-      if (signUpData || loginData) {
+      if ((signUpData || loginData) && !routePushed) {
+        console.log("setRoutePushed(true)");
+        setRoutePushed(true);
         router.push("/my-box");
       }
     }
   }, [signMessageData, signUpData, loginData]);
 
   return (
-    <div className={`w-screen h-screen 
+    <div
+      className={`w-screen h-screen 
                     bg-HeroImageLight dark:bg-HeroImageDark bg-cover 
-                    text-Neutral-Foreground-1-Rest`}>
+                    text-Neutral-Foreground-1-Rest`}
+    >
       <div className="w-full h-full px-20 flex items-center">
         <div className="flex flex-col">
           {globalContext.loading ? (
@@ -132,8 +135,6 @@ export default function Login() {
                   }}
                 </ConnectButton.Custom>
               </div>
-
-
             </>
           )}
         </div>
