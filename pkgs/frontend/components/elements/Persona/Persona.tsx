@@ -17,7 +17,8 @@ type PersonaProps = {
     quaternaryText?: string;
 
     icon?: ReactNode;
-    onClick?: MouseEventHandler<HTMLButtonElement>;
+    onClickIcon?: MouseEventHandler<HTMLButtonElement>;
+    onClickAvatars?: MouseEventHandler<HTMLButtonElement>;
 };
 
 const Persona: FC<PersonaProps> =
@@ -33,7 +34,8 @@ const Persona: FC<PersonaProps> =
         quaternaryText = "Quaternary Text",
 
         icon = <Button layout="subtle" headerVisible={true} headerIcon={<Settings20Filled />} labelVisible={false} />,
-        onClick,
+        onClickIcon,
+        onClickAvatars,
     }) => {
 
         const contentPadding = {
@@ -46,7 +48,7 @@ const Persona: FC<PersonaProps> =
         }
 
         const contentLayout = {
-            'TextAfter': 'flex-row',
+            'TextAfter': 'flex-row items-center',
             'TextBefore': 'flex-row-reverse',
             'TextBelow': 'flex-col',
         }
@@ -86,7 +88,9 @@ const Persona: FC<PersonaProps> =
                     <div
                         className={`w-full flex space-x-3
                 ${contentLayout[layout]}`}>
-                        <Avatars size={avatarSize} />
+                        <button onClick={onClickAvatars} className="block h-fit">
+                            <Avatars size={avatarSize} />
+                        </button>
                         <div
                             className={`w-full flex justify-between
                     ${verticalLayout[layout]}`}>
@@ -110,7 +114,7 @@ const Persona: FC<PersonaProps> =
                                 }
                             </div>
                             <div className={`pl-0.5 py-0.5 flex ${moreVertical[alignment]}`}>
-                                <Button onClick={onClick} layout="subtle" labelVisible={false} headerVisible={true} headerIcon={icon} />
+                                <Button onClick={onClickIcon} layout="subtle" labelVisible={false} headerVisible={true} headerIcon={icon} />
                             </div>
                         </div>
                     </div>

@@ -1,4 +1,5 @@
 import Button from "@/components/elements/Button/Button";
+import NotificationList from "@/components/elements/NotificationList/NotificationList";
 import LayoutMain from "@/components/layouts/Layout/LayoutMain";
 import Loading from "@/components/loading";
 import { GlobalContext } from "@/context/GlobalProvider";
@@ -39,45 +40,27 @@ export default function GetBox() {
               </div>
               <div className="flex flex-row justify-between items-center">
                 <div className="flex flex-row space-x-4">
-                  <Button fotterVisible={true} label="Type"/>
-                  <Button fotterVisible={true} label="People"/>
-                  <Button fotterVisible={true} label="Modified"/>
+                  <Button fotterVisible={true} label="Type" />
+                  <Button fotterVisible={true} label="People" />
+                  <Button fotterVisible={true} label="Modified" />
                 </div>
                 <div className="flex flex-row space-x-4">
-                  
+
                 </div>
               </div>
             </div>
 
             <div className="p-6">
-              <table className="w-full">
-                <tbody className="space-y-4">
-                  <tr
-                    className="overflow-hidden w-full rounded-lg flex flex-col bg-N96 border border-N42
-                                    [&>td]:flex [&>td]:px-2.5 [&>td]:py-3.5"
-                  >
-                    {pushList.length != 0 && (
-                      <>
-                        {pushList.map((push, i) => (
-                          <>
-                            <td className="flex-row space-x-3 border-b border-N42">
-                              <CheckboxUnchecked24Regular />
-                              <div className="w-full text-TitleLarge">
-                                {push.title}
-                              </div>
-                            </td>
-                            <td className="flex-col space-y-3 text-BodyLarge [&>div]:flex [&>div]:flex-row">
-                              <div className="space-x-2 whitespace-pre-line">
-                                {`${push.message}`}
-                              </div>
-                            </td>
-                          </>
-                        ))}
-                      </>
-                    )}
-                  </tr>
-                </tbody>
-              </table>
+              <ul className="w-full space-y-4">
+                {pushList.length != 0 && (
+                  <>
+                    {pushList.map((push, i) => (
+                      <NotificationList label={push.title} title={push.message} cid="にゃははははは" />
+                    ))}
+                  </>
+                )}
+                <NotificationList label="ラベルだよ～ん" title="タイトルだよ～ん" cid="にゃははははは" />
+              </ul>
             </div>
           </>
         )}
