@@ -1,22 +1,14 @@
 import Button from "@/components/elements/Button/Button";
+import NotificationList from "@/components/elements/NotificationList/NotificationList";
 import LayoutMain from "@/components/layouts/Layout/LayoutMain";
 import Loading from "@/components/loading";
 import { GlobalContext } from "@/context/GlobalProvider";
-// import { signer } from "@/hooks/useEthersProvider";
-import { getPushInfo } from "@/hooks/usePushProtocol";
-import {
-  getMessagesByReceiver,
-  getMessagesBySender,
-  Message,
-} from "@/utils/firebase";
-import { ListInfo } from "@/utils/type";
-import { CheckboxUnchecked24Regular } from "@fluentui/react-icons";
+import { getMessagesByReceiver, Message } from "@/utils/firebase";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 import { useAccount, useConfig } from "wagmi";
 
 export default function GetBox() {
-  const [pushList, setPushList] = useState<ListInfo[]>([]);
   const [messageList, setMessageList] = useState<Message[]>([]);
   const globalContext = useContext(GlobalContext);
   const config = useConfig();
@@ -60,34 +52,24 @@ export default function GetBox() {
             </div>
 
             <div className="p-6">
-              <table className="w-full">
-                <tbody className="space-y-4">
-                  <tr
-                    className="overflow-hidden w-full rounded-lg flex flex-col bg-N96 border border-N42
-                                    [&>td]:flex [&>td]:px-2.5 [&>td]:py-3.5"
-                  >
-                    {messageList.length != 0 && (
-                      <>
-                        {messageList.map((push, i) => (
-                          <>
-                            <td className="flex-row space-x-3 border-b border-N42">
-                              <CheckboxUnchecked24Regular />
-                              <div className="w-full text-TitleLarge">
-                                {`Shared Info from ${push.sender}`}
-                              </div>
-                            </td>
-                            <td className="flex-col space-y-3 border-b text-BodyLarge [&>div]:flex [&>div]:flex-row">
-                              <div className="space-x-2 whitespace-pre-line">
-                                {`${push.content}`}
-                              </div>
-                            </td>
-                          </>
-                        ))}
-                      </>
-                    )}
-                  </tr>
-                </tbody>
-              </table>
+              <ul className="w-full space-y-4">
+                {messageList.length > 0 && (
+                  <>
+                    {messageList.map((push, i) => (
+                      <NotificationList
+                        label={`Shared Info from ${push.sender}`}
+                        title={push.content}
+                        cid="にゃははははは"
+                      />
+                    ))}
+                  </>
+                )}
+                <NotificationList
+                  label="ラベルだよ～ん"
+                  title="タイトルだよ～ん"
+                  cid="にゃははははは"
+                />
+              </ul>
             </div>
           </>
         )}

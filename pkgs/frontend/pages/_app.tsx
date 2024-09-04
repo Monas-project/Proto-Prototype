@@ -22,6 +22,13 @@ import DarkMode from "@/components/layouts/DarkMode/DarkMode";
  */
 const queryClient = new QueryClient();
 
+function isDarkMode() {
+  return (
+    window.matchMedia &&
+    window.matchMedia("(prefers-color-scheme: dark)").matches
+  );
+}
+
 function MyApp({ Component, pageProps }: AppProps) {
   const [env, setEnv] = useState<ResponseData>();
 
@@ -54,13 +61,17 @@ function MyApp({ Component, pageProps }: AppProps) {
               coolMode={true}
               locale="en"
               showRecentTransactions={true}
-              theme={darkTheme({
-                accentColor: "rgb(54 44 73 / var(--tw-bg-opacity)",
-                accentColorForeground: "white",
-                borderRadius: "medium",
-                fontStack: "rounded",
-                overlayBlur: "large",
-              })}
+              theme={darkTheme(
+                isDarkMode()
+                  ? {}
+                  : {
+                      accentColor: "rgb(54 44 73 / var(--tw-bg-opacity)",
+                      accentColorForeground: "white",
+                      borderRadius: "medium",
+                      fontStack: "rounded",
+                      overlayBlur: "large",
+                    }
+              )}
               appInfo={{
                 appName: "Monas",
                 learnMoreUrl:

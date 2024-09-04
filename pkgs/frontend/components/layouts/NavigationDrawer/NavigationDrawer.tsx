@@ -10,6 +10,7 @@ import {
     PeopleCommunity24Filled,
     MailInbox24Filled,
     MailInbox24Regular,
+    SignOut20Filled,
 } from "@fluentui/react-icons";
 import { Logomark } from "@/public/Logomark";
 import Persona from "@/components/elements/Persona/Persona";
@@ -30,6 +31,7 @@ const tabs: VerticalTabProps[] = [
 
 export const NavigationDrawer = () => {
     const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+    const [isLogOutMenuOpen, setIsLogOutMenuOpen] = useState(false);
 
     const pathname = usePathname();
 
@@ -98,7 +100,19 @@ export const NavigationDrawer = () => {
             </div>
 
             <div className="w-full absolute bottom-0 bg-Neutral-Background-3-Rest">
-                <Persona avatarSize={32} primaryText="Montesquieu" onClick={() => setIsSettingsModalOpen(true)} />
+                <div className="relative">
+                    <Persona avatarSize={32} primaryText="Montesquieu" onClickAvatars={() => setIsLogOutMenuOpen(true)} onClickIcon={() => setIsSettingsModalOpen(true)} />
+                    {isLogOutMenuOpen && (
+                        <div onClick={(e) => e.target === e.currentTarget && setIsLogOutMenuOpen(false)} className="fixed inset-0 z-10">
+                            <div className="absolute bottom-14 mb-2 ml-2 w-60 rounded-lg px-2 py-1.5 bg-Neutral-Background-1-Rest shadow-Elevation04-Light dark:shadow-Elevation04-Dark">
+                                <button className="w-full flex flex-row space-x-2 px-2 py-1.5 bg-Neutral-Background-1-Rest hover:bg-Neutral-Background-1-Hover active:bg-Neutral-Background-1-Pressed text-Neutral-Foreground-2-Rest">
+                                    <SignOut20Filled />
+                                    <span className="text-LabelMedium">Log Out</span>
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
             </div>
 
             {isSettingsModalOpen && (
@@ -113,6 +127,8 @@ export const NavigationDrawer = () => {
                     />
                 </div>
             )}
+
+
         </div>
     );
 };
