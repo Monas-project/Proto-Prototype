@@ -12,7 +12,7 @@
       ".read": true,
       ".write": true,
       "$messageId": {
-        ".validate": "newData.hasChildren(['sender', 'receiver', 'content', 'timestamp'])"
+        ".validate": "newData.hasChildren(['sender', 'receiver', 'cid', 'key', 'rootId', 'content', 'timestamp'])"
       },
       ".indexOn": ["sender", "receiver"]
     }

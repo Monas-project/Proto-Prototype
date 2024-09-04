@@ -74,6 +74,9 @@ export const saveFcmToken = async (address: `0x${string}`) => {
 export interface Message {
   sender: Address;
   receiver: Address;
+  cid: string;
+  key: string;
+  rootId: string;
   content: string;
   timestamp: number;
 }
@@ -82,7 +85,10 @@ export interface Message {
 export const sendMessage = async (
   sender: Address,
   receiver: Address,
-  content: string
+  cid: string,
+  key: string,
+  rootId: string,
+  content: string = "Shared CID, Key, and Root ID (test mode)"
 ) => {
   const messagesRef = ref(firebaseRtDb, "messages");
 
@@ -92,6 +98,9 @@ export const sendMessage = async (
   const message: Message = {
     sender,
     receiver,
+    cid,
+    key,
+    rootId,
     content,
     timestamp: Date.now(),
   };

@@ -5,16 +5,16 @@ export type NotificationListProps = {
   label: string;
   title: string;
   cid?: string;
-  key?: string;
-  fileInfo?: string;
+  subfolderKey?: string;
+  rootId?: string;
 };
 
 const NotificationList: FC<NotificationListProps> = ({
   label = "Label",
   title = "Title",
   cid = "cid",
-  key = "key",
-  fileInfo = "fileInfo",
+  subfolderKey = "key",
+  rootId = "rootId",
 }) => {
   const [isChecked, setIsChecked] = useState<boolean>(false);
 
@@ -44,9 +44,12 @@ const NotificationList: FC<NotificationListProps> = ({
           <div className=" space-y-2 pl-8 pr-6 py-3">
             <span className="block text-BodyLarge">{title}</span>
             <div className="flex flex-col space-y-1 text-BodySmall text-Neutral-Foreground-Variant-Rest">
+              <span>cid</span>
               <span>{cid}</span>
-              <span>{key}</span>
-              <span>{fileInfo}</span>
+              <span>key</span>
+              <span>{subfolderKey}</span>
+              <span>rootId</span>
+              <span>{rootId}</span>
             </div>
           </div>
         </div>

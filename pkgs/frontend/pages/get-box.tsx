@@ -59,16 +59,13 @@ export default function GetBox() {
                       <NotificationList
                         label={`Shared Info from ${push.sender}`}
                         title={push.content}
-                        cid="にゃははははは"
+                        cid={push.cid || ""}
+                        subfolderKey={push.key || ""}
+                        rootId={push.rootId || ""}
                       />
                     ))}
                   </>
                 )}
-                <NotificationList
-                  label="ラベルだよ～ん"
-                  title="タイトルだよ～ん"
-                  cid="にゃははははは"
-                />
               </ul>
             </div>
           </>

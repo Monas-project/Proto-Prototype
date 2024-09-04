@@ -295,16 +295,8 @@ export default function MyBox() {
     if (!address || !to || !sharingData) return;
     try {
       globalContext.setLoading(true);
-      console.log("to:", to);
 
-      const message = `
-          This is a test Notification!!!!!!
-
-          CID: ${sharingData?.cid}
-          Key: ${sharingData?.key}
-          RootId: ${rootId}
-        `;
-      await sendMessage(address, to, message);
+      await sendMessage(address, to, sharingData.cid, sharingData.key, rootId!);
 
       toast.success(
         "Share File Success!! Please wait a moment until it is reflected.",
@@ -333,6 +325,7 @@ export default function MyBox() {
       });
     } finally {
       globalContext.setLoading(false);
+      setIsShareModalOpen(false);
     }
   };
 
