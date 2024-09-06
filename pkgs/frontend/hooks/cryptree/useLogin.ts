@@ -14,7 +14,8 @@ import { useSignUp } from "./useSignUp";
 import { saveFcmToken, sendMessage } from "@/utils/firebase";
 
 dotenv.config();
-const baseUrl: string = process.env.CRYPTREE_API_URL || "http://localhost:8000";
+const baseUrl =
+  process.env.NEXT_PUBLIC_CRYPTREE_API_URL || "http://localhost:3000";
 
 export const useLogin = (address: `0x${string}`, signature: `0x${string}`) => {
   const [data, setData] = useState(null);

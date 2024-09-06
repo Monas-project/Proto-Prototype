@@ -7,6 +7,7 @@ import { getMessagesByReceiver, Message } from "@/utils/firebase";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 import { useAccount, useConfig } from "wagmi";
+import { ResponseData } from "./api/env";
 
 export default function GetBox() {
   const [messageList, setMessageList] = useState<Message[]>([]);
@@ -62,6 +63,7 @@ export default function GetBox() {
                         cid={push.cid || ""}
                         subfolderKey={push.key || ""}
                         rootId={push.rootId || ""}
+                        key={push.timestamp}
                       />
                     ))}
                   </>

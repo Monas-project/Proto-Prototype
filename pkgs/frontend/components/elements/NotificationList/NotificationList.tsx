@@ -1,4 +1,4 @@
-import React, { FC, MouseEventHandler, ReactNode, useState } from "react";
+import React, { FC, useState } from "react";
 import Checkboxes from "../Checkboxes/Checkboxes";
 
 export type NotificationListProps = {

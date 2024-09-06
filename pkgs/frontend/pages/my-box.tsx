@@ -46,7 +46,6 @@ export default function MyBox() {
 
   const [isCreateFolderModalOpen, setIsCreateFolderModalOpen] = useState(false);
   const [to, setTo] = useState<any>();
-  const [env, setEnv] = useState<ResponseData>();
   const router = useRouter();
   const [isFileUploadModalOpen, setIsFileUploadModalOpen] = useState(false);
   const [sharingData, setSharingData] = useState<any>(null);

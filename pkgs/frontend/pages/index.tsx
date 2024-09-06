@@ -9,9 +9,8 @@ import { ResponseData } from "./api/env";
 import { useSignUp } from "@/hooks/cryptree/useSignUp";
 import { useLogin } from "@/hooks/cryptree/useLogin";
 
-export default function Login() {
+export default function Login({ env }: { env: ResponseData }) {
   const [routePushed, setRoutePushed] = useState(false);
-  const [env, setEnv] = useState<ResponseData>();
   const account = useAccount();
   const router = useRouter();
   const globalContext = useContext(GlobalContext);
@@ -26,8 +25,7 @@ export default function Login() {
     try {
       globalContext.setLoading(true);
       // get .env values
-      const envData = await getEnv();
-      await signMessageAsync({ message: envData.SECRET_MESSAGE });
+      await signMessageAsync({ message: env.SECRET_MESSAGE });
     } catch (err) {
       console.error("error:", err);
     } finally {

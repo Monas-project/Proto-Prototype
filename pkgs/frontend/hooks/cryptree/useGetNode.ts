@@ -4,7 +4,8 @@ import "dotenv/config";
 import { GlobalContext } from "@/context/GlobalProvider";
 
 dotenv.config();
-const baseUrl: string = process.env.CRYPTREE_API_URL || "http://localhost:8000";
+const baseUrl =
+  process.env.NEXT_PUBLIC_CRYPTREE_API_URL || "http://localhost:3000";
 
 type GetNodeResponse = {
   metadata: any;

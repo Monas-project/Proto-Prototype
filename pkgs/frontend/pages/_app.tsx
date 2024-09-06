@@ -80,7 +80,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             >
               <GlobalProvider>
                 <DarkMode>
-                  <Component {...pageProps} />
+                  <Component {...pageProps} env={env} />
                 </DarkMode>
               </GlobalProvider>
             </RainbowKitProvider>
