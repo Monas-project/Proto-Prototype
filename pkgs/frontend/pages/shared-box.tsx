@@ -21,7 +21,7 @@ export default function SharedBox() {
   const [cid, setCid] = useState<string>("");
   const [subfolderKey, setSubfolderKey] = useState<string>("");
   const globalContext = useContext(GlobalContext);
-  const { accessToken, setLoading } = globalContext;
+  const { accessToken, setLoading, loading } = globalContext;
   const [node, setNode] = useState<any>(null);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
@@ -199,12 +199,13 @@ export default function SharedBox() {
             <Dialog
               primaryButtonProps={{
                 label: "Receive",
-                onClick: receive,
-                disabled: isButtonDisabled,
+                onClick: () => receive,
+                disabled: isButtonDisabled || loading,
               }}
               secondaryButtonProps={{
                 label: "Close",
-                onClick: handleCloseButton,
+                onClick: () => handleCloseButton,
+                disabled: isButtonDisabled || loading,
               }}
             >
               <div className="py-6 text-center">
@@ -214,11 +215,12 @@ export default function SharedBox() {
               </div>
               <div className="space-y-4">
                 <Input
-                  id="uri"
-                  label="URI"
+                  id="cid"
+                  label="CID"
                   inputValue={cid}
                   setInputValue={setCid}
                   layout="filledDarker"
+                  placeholder="Enter CID"
                 />
                 <Input
                   id="secretKey"
@@ -226,6 +228,7 @@ export default function SharedBox() {
                   inputValue={subfolderKey}
                   setInputValue={setSubfolderKey}
                   layout="filledDarker"
+                  placeholder="Enter Secret Key"
                 />
               </div>
             </Dialog>
