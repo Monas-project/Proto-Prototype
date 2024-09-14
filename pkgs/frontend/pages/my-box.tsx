@@ -43,6 +43,7 @@ export default function MyBox() {
   const [isSelected, setIsSelected] = useState<boolean>(false);
   const [isSelectedId, setIsSelectedId] = useState<any>(0);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [folderName, setFolderName] = useState("");
 
   const [isCreateFolderModalOpen, setIsCreateFolderModalOpen] = useState(false);
   const [to, setTo] = useState<any>();
@@ -62,6 +63,8 @@ export default function MyBox() {
     setCurrentNodeCid,
     currentNodeKey,
     setCurrentNodeKey,
+    loading,
+    setLoading,
   } = globalContext;
   const { data: getNodeData, error: getNodeError } = useGetNode(
     currentNodeKey!,
@@ -121,7 +124,7 @@ export default function MyBox() {
     // ここにファイルアップロードのためのAPI呼び出し処理を記述します
     console.log("ファイルをアップロード中…");
     try {
-      globalContext.setLoading(true);
+      setLoading(true);
       const res = await createNode(accessToken!, formData);
 
       setRootId(res.root_id);
@@ -162,25 +165,24 @@ export default function MyBox() {
         theme: "colored",
       });
     } finally {
-      globalContext.setLoading(false);
+      setLoading(false);
       setIsFileUploadModalOpen(false);
     }
+  };
+
+  const createFolderModalOpen = () => {
+    setIsCreateFolderModalOpen(true);
   };
 
   /**
    * createFolder function
    */
   const createFolder = async () => {
-    setIsCreateFolderModalOpen(true);
     if (!address || !currentNodeCid || !currentNodeKey) return;
     try {
-      globalContext.setLoading(true);
-      // TODO call encrypt API from cryptree
-      // TODO call ipfs API from cryptree
-      // call same API when upload file & create folder
-      // call insert method
+      setLoading(true);
       const formData = new FormData();
-      formData.append("name", "test " + Math.random().toString(36).slice(-8));
+      formData.append("name", folderName);
       formData.append("owner_id", address);
       formData.append("subfolder_key", currentNodeKey!);
       formData.append("root_key", rootKey!);
@@ -224,7 +226,8 @@ export default function MyBox() {
         theme: "colored",
       });
     } finally {
-      globalContext.setLoading(false);
+      setLoading(false);
+      setIsCreateFolderModalOpen(false);
     }
   };
 
@@ -234,11 +237,7 @@ export default function MyBox() {
   const deleteFile = async (cid: string) => {
     if (!address || !currentNodeCid || !currentNodeKey) return;
     try {
-      globalContext.setLoading(true);
-      // TODO call encrypt API from cryptree
-      // TODO call ipfs API from cryptree
-      // call same API when upload file & create folder
-      // call insert method
+      setLoading(true);
       const formData = new FormData();
       formData.append("cid", cid);
       formData.append("subfolder_key", currentNodeKey!);
@@ -283,7 +282,7 @@ export default function MyBox() {
         theme: "colored",
       });
     } finally {
-      globalContext.setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -293,7 +292,7 @@ export default function MyBox() {
   const shareFile = async () => {
     if (!address || !to || !sharingData) return;
     try {
-      globalContext.setLoading(true);
+      setLoading(true);
 
       await sendMessage(address, to, sharingData.cid, sharingData.key, rootId!);
 
@@ -323,7 +322,7 @@ export default function MyBox() {
         theme: "colored",
       });
     } finally {
-      globalContext.setLoading(false);
+      setLoading(false);
       setIsShareModalOpen(false);
     }
   };
@@ -333,7 +332,7 @@ export default function MyBox() {
    */
   const reEncrypt = async (targetCid: string) => {
     try {
-      globalContext.setLoading(true);
+      setLoading(true);
 
       const res = await reEncryptNode(
         accessToken!,
@@ -371,7 +370,7 @@ export default function MyBox() {
         theme: "colored",
       });
     } finally {
-      globalContext.setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -380,8 +379,7 @@ export default function MyBox() {
    */
   const download = async (data: string, name: string) => {
     try {
-      globalContext.setLoading(true);
-      // TODO CID
+      setLoading(true);
       // Fileオブジェクトをダウンロードする処理を入れる。
       downloadFile(data, name);
 
@@ -411,25 +409,25 @@ export default function MyBox() {
         theme: "colored",
       });
     } finally {
-      globalContext.setLoading(false);
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    globalContext.setLoading(false);
+    setLoading(false);
     const init = async () => {
       if (!isConnected && !address) {
         router.push("/");
         return;
       }
-      globalContext.setLoading(true);
+      setLoading(true);
       try {
         console.log("getNodeData:", getNodeData);
         initializeFirebaseMessaging();
       } catch (err) {
         console.error("err", err);
       } finally {
-        globalContext.setLoading(false);
+        setLoading(false);
       }
     };
     init();
@@ -469,7 +467,7 @@ export default function MyBox() {
                     label="Create Folder"
                     headerVisible={true}
                     headerIcon={<FolderAdd20Regular />}
-                    onClick={createFolder}
+                    onClick={createFolderModalOpen}
                   />
                 </div>
               </div>
@@ -680,10 +678,15 @@ export default function MyBox() {
             className="fixed top-0 left-0 right-0 bottom-0 bg-Neutral-Background-Overlay-Rest"
           >
             <Dialog
-              primaryButtonProps={{ label: "Create" }}
+              primaryButtonProps={{
+                label: "Create",
+                onClick: () => createFolder(),
+                disabled: loading,
+              }}
               secondaryButtonProps={{
                 label: "Cancel",
                 onClick: () => setIsCreateFolderModalOpen(false),
+                disabled: loading,
               }}
             >
               <div className="py-6 text-center">
@@ -695,7 +698,8 @@ export default function MyBox() {
                 <Input
                   id="folderName"
                   label="New folder name"
-                  // inputValue={folderName}
+                  inputValue={folderName}
+                  setInputValue={setFolderName}
                   layout="filledDarker"
                   placeholder="new folder"
                 />
