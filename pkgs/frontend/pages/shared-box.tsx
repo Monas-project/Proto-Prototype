@@ -199,12 +199,12 @@ export default function SharedBox() {
             <Dialog
               primaryButtonProps={{
                 label: "Receive",
-                onClick: () => receive,
+                onClick: receive,
                 disabled: isButtonDisabled || loading,
               }}
               secondaryButtonProps={{
                 label: "Close",
-                onClick: () => handleCloseButton,
+                onClick: handleCloseButton,
                 disabled: isButtonDisabled || loading,
               }}
             >
