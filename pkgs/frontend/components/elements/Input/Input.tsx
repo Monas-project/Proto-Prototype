@@ -59,7 +59,7 @@ const Input: FC<InputProps> = ({
   };
 
   const isValidInput = (input: string) => {
-    const regex = /^[a-zA-Z0-9=\_]*$/;
+    const regex = /^[a-zA-Z0-9=\_\-\+]*$/;
     return regex.test(input);
   };
 
