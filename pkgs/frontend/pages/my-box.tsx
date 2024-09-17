@@ -435,10 +435,11 @@ export default function MyBox() {
   useEffect(() => {
     globalContext.setLoading(false);
     const init = async () => {
+      /*
       if (!isConnected && !address) {
         router.push("/");
         return;
-      }
+      } */
       globalContext.setLoading(true);
       try {
         console.log("getNodeData:", getNodeData);
