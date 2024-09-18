@@ -14,6 +14,10 @@ from fake_ipfs import FakeIPFS
 from ipfs_client import IpfsClient
 import base64
 from root_id_store_contract import RootIdStoreContract
+import io
+import zipfile
+from fastapi.responses import StreamingResponse
+import urllib
 
 
 # .envファイルの内容を読み込見込む
@@ -271,5 +275,58 @@ async def reset_root(
         return {"message": "Root reset successfully"}
     else:
         raise HTTPException(status_code=401, detail="Invalid signature or address")
+
+
+@router.post("/download-folder")
+async def download_folder(
+    request: FetchNodeRequest = Body(...),
+    current_user: dict = Depends(get_current_user)
+):
+    print("download-folder")
+    try:
+        cid = request.cid
+        subfolder_key = request.subfolder_key
+
+        # ZIPファイルを作成するためのメモリストリームを準備
+        zip_buffer = io.BytesIO()
+        with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
+            # ルートフォルダを取得
+            root_node = CryptreeNode.get_node(cid, subfolder_key, ipfs_client)
+
+            # フォルダ構造を再帰的に処理してZIPファイルに追加
+            add_folder_to_zip(zip_file, root_node, "")
+
+        encoded_filename = urllib.parse.quote(root_node.metadata.name.encode('utf-8'))
+
+        # ZIPファイルの内容をレスポンスとして返す
+        zip_buffer.seek(0)
+        return StreamingResponse(
+            iter([zip_buffer.getvalue()]),
+            media_type="application/zip",
+            headers={
+                "Content-Disposition": f"attachment; filename*=UTF-8''{encoded_filename}.zip",
+                "Access-Control-Expose-Headers": "Content-Disposition"
+            }
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+def add_folder_to_zip(zip_file: zipfile.ZipFile, node: CryptreeNode, current_path: str):
+    new_path = os.path.join(current_path, node.metadata.name)
+
+    if node.is_file:
+        # ファイルの場合、コンテンツを取得して追加
+        file_info = node.metadata.children[0]
+        enc_file_data = ipfs_client.cat(file_info.cid)
+        file_data = CryptreeNode.decrypt(file_info.fk, enc_file_data)
+        zip_file.writestr(new_path, file_data)
+    else:
+        # フォルダの場合、空のフォルダを作成
+        zip_file.writestr(new_path + "/", "")
+
+        # 子ノードを再帰的に処理
+        for child in node.metadata.children:
+            child_node = CryptreeNode.get_node(child.cid, child.sk, ipfs_client)
+            add_folder_to_zip(zip_file, child_node, new_path)
 
 app.include_router(router, prefix="/api")

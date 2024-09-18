@@ -6,6 +6,7 @@ import LayoutMain from "@/components/layouts/Layout/LayoutMain";
 import { GlobalContext } from "@/context/GlobalProvider";
 import { getBox } from "@/cryptree/getBox";
 import { downloadFile } from "@/utils/downloadFile";
+import { downloadFolderZip } from "@/cryptree/downloadFolderZip";
 import {
   ArrowDownload20Regular,
   Delete20Regular,
@@ -52,7 +53,14 @@ export default function SharedBox() {
   };
 
   const download = async () => {
-    downloadFile(node.file_data, node.metadata.name);
+    if (!node) {
+      return;
+    }
+    if (!node.file_data) {
+      await downloadFolderZip(accessToken!, cid, subfolderKey);
+    } else {
+      downloadFile(node.file_data, node.metadata.name);
+    }
   };
 
   const handleCloseButton = () => {
