@@ -8,7 +8,7 @@ import {
   MoreVertical16Regular,
   Share20Regular,
 } from "@fluentui/react-icons";
-import { NodeData } from "@/cryptree/types";
+import { ChildNodeInfo, NodeData } from "@/cryptree/types";
 
 const fileTableTr = [
   { th: "Name", width: 55, mWidth: 300 },
@@ -21,11 +21,7 @@ type NodeTableProps = {
   nodeData: NodeData;
   openNode: (name: string, cid: string, key: string) => void;
   download: (node: NodeData, cid: string) => void;
-  shareButtonClick?: (childInfo: {
-    cid: string;
-    fk: string;
-    sk: string;
-  }) => void;
+  shareButtonClick?: (childInfo: ChildNodeInfo) => void;
   deleteNode?: (cid: string) => void;
   reEncryptNode?: (cid: string) => void;
 };
