@@ -67,5 +67,5 @@ export const useGetNode = (subfolder_key: string, cid: string) => {
     getNode();
   }, [subfolder_key, cid]);
 
-  return { data, getNode, loading, error };
+  return { data, getNode, setNodeData: setData, loading, error };
 };

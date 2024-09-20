@@ -4,17 +4,20 @@ import { getEnv } from "@/utils/getEnv";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
-import { useAccount, useSignMessage } from "wagmi";
+import { useAccount, useConfig, useSignMessage } from "wagmi";
 import { ResponseData } from "./api/env";
 import { useSignUp } from "@/hooks/cryptree/useSignUp";
 import { useLogin } from "@/hooks/cryptree/useLogin";
 
 export default function Login({ env }: { env: ResponseData }) {
   const [routePushed, setRoutePushed] = useState(false);
-  const account = useAccount();
+  const config = useConfig();
+  const account = useAccount({ config });
   const router = useRouter();
   const globalContext = useContext(GlobalContext);
-  const { data: signMessageData, signMessageAsync } = useSignMessage();
+  const { data: signMessageData, signMessageAsync } = useSignMessage({
+    config,
+  });
   const { data: signUpData } = useSignUp(account?.address!, signMessageData!);
   const { data: loginData } = useLogin(account?.address!, signMessageData!);
 
@@ -34,8 +37,6 @@ export default function Login({ env }: { env: ResponseData }) {
   };
 
   useEffect(() => {
-    console.log("signMessageData:", signMessageData);
-    console.log("routePushed:", routePushed);
     if (signMessageData) {
       if ((signUpData || loginData) && !routePushed) {
         console.log("setRoutePushed(true)");
