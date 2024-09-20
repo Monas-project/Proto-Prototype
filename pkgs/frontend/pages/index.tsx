@@ -1,6 +1,5 @@
 import Loading from "@/components/loading";
 import { GlobalContext } from "@/context/GlobalProvider";
-import { getEnv } from "@/utils/getEnv";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";

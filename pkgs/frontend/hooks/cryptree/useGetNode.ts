@@ -18,16 +18,7 @@ type GetNodeResponse = {
 export const useGetNode = (subfolder_key: string, cid: string) => {
   const [data, setData] = useState<GetNodeResponse | null>(null);
   const [error, setError] = useState<Error | null>(null);
-  const {
-    accessToken,
-    setAccessToken,
-    loading,
-    setLoading,
-    setRootId,
-    setRootKey,
-    setCurrentNodeCid,
-    setCurrentNodeKey,
-  } = useContext(GlobalContext);
+  const { accessToken, loading, setLoading } = useContext(GlobalContext);
 
   const getNode = async () => {
     if (!subfolder_key || !cid) return;
