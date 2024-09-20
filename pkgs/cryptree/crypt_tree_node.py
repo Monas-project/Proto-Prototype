@@ -1,7 +1,7 @@
 from pydantic import Field
 from typing import Optional, Type
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from cryptography.fernet import Fernet
 from model import Metadata, ChildNodeInfo, CryptreeNodeModel
 import base64
@@ -49,7 +49,7 @@ class CryptreeNode(CryptreeNodeModel):
         metadata = Metadata(
             name=name,
             owner_id=owner_id,
-            created_at=datetime.now(),
+            created_at=datetime.now(timezone.utc),
             children=[]
         )
 
