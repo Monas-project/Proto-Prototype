@@ -20,7 +20,6 @@ export default function SharedBox() {
   const [currentSubfolderKey, setCurrentSubfolderKey] = useState<string>("");
   const [subfolderKey, setSubfolderKey] = useState<string>("");
   const globalContext = useContext(GlobalContext);
-  const [node, setNode] = useState<any>(null);
   const { rootKey, accessToken, loading, setLoading } = globalContext;
   const [breadcrumbItems, setBreadcrumbItems] = useState<any[]>([
     {
@@ -51,8 +50,10 @@ export default function SharedBox() {
         throw new Error("Failed to get shared node");
       }
       setNodeData(sharedNode);
-      setNode(sharedNode);
       setLoading(false);
+      setCid("");
+      setSubfolderKey("");
+      setIsGetBoxModalOpen(false);
     } catch (err) {
       console.error("err:", err);
     } finally {
@@ -134,19 +135,12 @@ export default function SharedBox() {
         return;
       }
       setNodeData(sharedNode);
-      setBreadcrumbItems(items);
-      return;
+    } else {
+      setCurrentCid(breadcrumbItems[index].cid);
+      setCurrentSubfolderKey(breadcrumbItems[index].key);
     }
-    setCurrentCid(breadcrumbItems[index].cid);
-    setCurrentSubfolderKey(breadcrumbItems[index].key);
     setBreadcrumbItems(items);
   };
-
-  useEffect(() => {
-    if (currentCid === "") {
-      return;
-    }
-  }, [currentCid, currentSubfolderKey]);
 
   return (
     <LayoutMain>

@@ -193,7 +193,7 @@ export default function MyBox() {
           key: rootKey!,
         },
       ]);
-
+      setFolderName("");
       toast.success(
         "CreateFolder Success!! Please wait a moment until it is reflected.",
         {
