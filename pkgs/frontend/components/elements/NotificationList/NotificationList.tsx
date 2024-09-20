@@ -1,5 +1,6 @@
 import React, { FC, useState } from "react";
 import Checkboxes from "../Checkboxes/Checkboxes";
+import { CopyButton } from "../Button/CopyButton";
 
 export type NotificationListProps = {
   label: string;
@@ -44,12 +45,16 @@ const NotificationList: FC<NotificationListProps> = ({
           <div className=" space-y-2 pl-8 pr-6 py-3">
             <span className="block text-BodyLarge">{title}</span>
             <div className="flex flex-col space-y-1 text-BodySmall text-Neutral-Foreground-Variant-Rest">
-              <span>cid</span>
-              <span>{cid}</span>
-              <span>key</span>
-              <span>{subfolderKey}</span>
-              <span>rootId</span>
-              <span>{rootId}</span>
+              <span>
+                cid: <CopyButton label={cid} content={cid} />
+              </span>
+              <span>
+                key: <CopyButton label={subfolderKey} content={subfolderKey} />
+              </span>
+              <span>
+                rootId:
+                <CopyButton label={rootId} content={rootId} />
+              </span>
             </div>
           </div>
         </div>
