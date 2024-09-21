@@ -7,7 +7,6 @@ import { getMessagesByReceiver, Message } from "@/utils/firebase";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 import { useAccount, useConfig } from "wagmi";
-import { ResponseData } from "./api/env";
 
 export default function GetBox() {
   const [messageList, setMessageList] = useState<Message[]>([]);
