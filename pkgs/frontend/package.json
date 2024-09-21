@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "@fluentui/react-icons": "^2.0.242",
-    "@pushprotocol/restapi": "^1.7.2",
     "@rainbow-me/rainbowkit": "^2.0.5",
     "@tanstack/react-query": "^5.51.11",
     "@types/jest": "^29.5.12",
@@ -23,6 +22,7 @@
     "eslint": "8.56.0",
     "eslint-config-next": "14.1.0",
     "ethers": "^6.11.0",
+    "firebase": "^10.13.0",
     "next": "14.1.0",
     "postcss": "8.4.33",
     "react": "18.2.0",

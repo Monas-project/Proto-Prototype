@@ -1,9 +1,7 @@
 import Button from "@/components/elements/Button/Button";
-import CompoundButton from "@/components/elements/Button/CompoundButton";
 import Dialog from "@/components/elements/Dialog/Dialog";
 import FileFormatIcon from "@/components/elements/FileFormatIcon/FileFormatIcon";
 import Input from "@/components/elements/Input/Input";
-import { VerticalTabProps } from "@/components/elements/Tabs/VerticalTab";
 import LayoutMain from "@/components/layouts/Layout/LayoutMain";
 import { GlobalContext } from "@/context/GlobalProvider";
 import { getBox } from "@/cryptree/getBox";
@@ -23,7 +21,7 @@ export default function SharedBox() {
   const [cid, setCid] = useState<string>("");
   const [subfolderKey, setSubfolderKey] = useState<string>("");
   const globalContext = useContext(GlobalContext);
-  const { accessToken, setLoading } = globalContext;
+  const { accessToken, setLoading, loading } = globalContext;
   const [node, setNode] = useState<any>(null);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
@@ -46,8 +44,6 @@ export default function SharedBox() {
       const res = await getBox(accessToken!, subfolderKey, cid);
       setNode(res);
       setLoading(false);
-      console.log("resaaa");
-      console.log(res);
     } catch (err) {
       console.error("err:", err);
     } finally {
@@ -61,17 +57,17 @@ export default function SharedBox() {
 
   const handleCloseButton = () => {
     setIsGetBoxModalOpen(false);
-    setCid('');
-    setSubfolderKey('');
+    setCid("");
+    setSubfolderKey("");
   };
 
   useEffect(() => {
-    if (cid.trim() === '' || subfolderKey.trim() === '') {
+    if (cid.trim() === "" || subfolderKey.trim() === "") {
       setIsButtonDisabled(true);
     } else {
       setIsButtonDisabled(false);
     }
-  }, [cid, subfolderKey])
+  }, [cid, subfolderKey]);
 
   return (
     <LayoutMain>
@@ -106,11 +102,16 @@ export default function SharedBox() {
         <div className="w-full grow flex flex-col p-6 space-y-6">
           <div className="grow rounded-lg px-6 bg-Neutral-Background-1-Rest">
             <table className="w-full">
-
               <thead className="border-b border-Neutral-Stroke-1-Rest text-TitleSmall text-Neutral-Foreground-Variant-Rest">
                 <tr className="w-full h-fit flex flex-row space-x-8 px-6 py-4 text-left [&_th]:p-0 [&_th]:font-medium">
                   {fileTableTr.map((x) => (
-                    <th key={x.th} style={{ width: `${x.width}%`, minWidth: `${x.mWidth}px` }}>
+                    <th
+                      key={x.th}
+                      style={{
+                        width: `${x.width}%`,
+                        minWidth: `${x.mWidth}px`,
+                      }}
+                    >
                       {x.th}
                     </th>
                   ))}
@@ -122,12 +123,17 @@ export default function SharedBox() {
                   <tr
                     onClick={() => setIsSelected(!isSelected)}
                     className={`w-full flex flex-row px-6 py-2.5 space-x-8 border-b border-Neutral-Stroke-1-Rest text-BodyLarge items-center group 
-                                    ${isSelected ? "bg-Neutral-Background-1-Pressed" : "bg-Neutral-Background-1-Rest hover:bg-Neutral-Background-1-Hover"} [&>td]:flex [&>td]:p-0`}>
+                                    ${
+                                      isSelected
+                                        ? "bg-Neutral-Background-1-Pressed"
+                                        : "bg-Neutral-Background-1-Rest hover:bg-Neutral-Background-1-Hover"
+                                    } [&>td]:flex [&>td]:p-0`}
+                  >
                     <td
                       style={{ width: `${fileTableTr[0].width}%` }}
                       className="flex flex-row items-center space-x-6"
                     >
-                      <FileFormatIcon fileType='DocumentIcon' />
+                      <FileFormatIcon fileType="DocumentIcon" />
                       <div>{node.metadata.name}</div>
                     </td>
                     <td style={{ width: `${fileTableTr[1].width}%` }}>
@@ -145,8 +151,15 @@ export default function SharedBox() {
                         " " +
                         new Date(node.metadata.created_at).toLocaleTimeString()}
                     </td>
-                    <td style={{ width: `${fileTableTr[3].width}%` }} className="space-x-5 justify-end items-center">
-                      <div className={`space-x-3 flex flex-row group-hover:flex ${isSelected ? "flex" : "hidden"}`}>
+                    <td
+                      style={{ width: `${fileTableTr[3].width}%` }}
+                      className="space-x-5 justify-end items-center"
+                    >
+                      <div
+                        className={`space-x-3 flex flex-row group-hover:flex ${
+                          isSelected ? "flex" : "hidden"
+                        }`}
+                      >
                         <Button
                           layout="subtle"
                           headerVisible={true}
@@ -178,23 +191,36 @@ export default function SharedBox() {
         {/* GetBox Button Dialog */}
         {isGetBoxModalOpen && (
           <div
-            onClick={(e) => e.target === e.currentTarget && setIsGetBoxModalOpen(false)}
+            onClick={(e) =>
+              e.target === e.currentTarget && setIsGetBoxModalOpen(false)
+            }
             className="fixed top-0 left-0 right-0 bottom-0 bg-Neutral-Background-Overlay-Rest"
           >
             <Dialog
-              primaryButtonProps={{ label: 'Receive', onClick: receive, disabled: isButtonDisabled, }}
-              secondaryButtonProps={{ label: 'Close', onClick: handleCloseButton, }}
+              primaryButtonProps={{
+                label: "Receive",
+                onClick: receive,
+                disabled: isButtonDisabled || loading,
+              }}
+              secondaryButtonProps={{
+                label: "Close",
+                onClick: handleCloseButton,
+                disabled: isButtonDisabled || loading,
+              }}
             >
               <div className="py-6 text-center">
-                <span className="text-TitleLarge text-Neutral-Foreground-1-Rest">Get Box</span>
+                <span className="text-TitleLarge text-Neutral-Foreground-1-Rest">
+                  Get Box
+                </span>
               </div>
               <div className="space-y-4">
                 <Input
-                  id="uri"
-                  label="URI"
+                  id="cid"
+                  label="CID"
                   inputValue={cid}
                   setInputValue={setCid}
                   layout="filledDarker"
+                  placeholder="Enter CID"
                 />
                 <Input
                   id="secretKey"
@@ -202,6 +228,7 @@ export default function SharedBox() {
                   inputValue={subfolderKey}
                   setInputValue={setSubfolderKey}
                   layout="filledDarker"
+                  placeholder="Enter Secret Key"
                 />
               </div>
             </Dialog>

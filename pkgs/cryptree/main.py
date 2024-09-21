@@ -22,6 +22,7 @@ load_dotenv()
 # 例: 環境変数 'ENV' が 'True' の場合にのみ実際の接続を行う
 ipfs_host = os.getenv("IPFS_HOST", "localhost")
 ipfs_port = os.getenv("IPFS_PORT", "5001")
+auth_token = os.getenv("MONAS_IPFS_AUTH_TOKEN", None)
 
 allow_origin = os.getenv("ALLOW_ORIGIN", "http://localhost:3000")
 if os.environ.get('ENV') == 'development':
@@ -29,7 +30,7 @@ if os.environ.get('ENV') == 'development':
 elif os.environ.get('ENV') == 'test':
     ipfs_client = FakeIPFS()  # テスト用の偽のIPFSクライアント
 else:
-    ipfs_client = IpfsClient(f'https://{ipfs_host}:{ipfs_port}')
+    ipfs_client = IpfsClient(f'https://{ipfs_host}:{ipfs_port}', auth_token)
 
 w3 = Web3()
 app = FastAPI()

@@ -6,12 +6,6 @@ import LayoutMain from "@/components/layouts/Layout/LayoutMain";
 import Loading from "@/components/loading";
 import { GlobalContext } from "@/context/GlobalProvider";
 import {
-  TableData,
-  getSelectedTableData,
-  insertTableData,
-} from "@/hooks/useContract";
-import { sendNotification } from "@/hooks/usePushProtocol";
-import {
   ArrowDownload20Regular,
   Delete20Regular,
   DocumentArrowUp20Regular,
@@ -24,7 +18,7 @@ import {
 import { useContext, useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useAccount } from "wagmi";
+import { useAccount, useConfig } from "wagmi";
 import { ResponseData } from "./api/env";
 import { useGetNode } from "@/hooks/cryptree/useGetNode";
 import { useRouter } from "next/router";
@@ -35,8 +29,8 @@ import { downloadFile } from "@/utils/downloadFile";
 import { reEncryptNode } from "@/cryptree/reEncryptNode";
 import Breadcrumb from "@/components/elements/Breadcrumb/Breadcrumb";
 import According from "@/components/elements/According/According";
+import { initializeFirebaseMessaging, sendMessage } from "@/utils/firebase";
 import Dialog from "@/components/elements/Dialog/Dialog";
-import FileList from "@/components/layouts/FileList/FileList";
 
 const fileTableTr = [
   { th: "Name", width: 55, mWidth: 300 },
@@ -49,16 +43,17 @@ export default function MyBox() {
   const [isSelected, setIsSelected] = useState<boolean>(false);
   const [isSelectedId, setIsSelectedId] = useState<any>(0);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [folderName, setFolderName] = useState("");
+
   const [isCreateFolderModalOpen, setIsCreateFolderModalOpen] = useState(false);
-  const [tableDatas, setTableDatas] = useState<TableData[]>();
   const [to, setTo] = useState<any>();
-  const [env, setEnv] = useState<ResponseData>();
   const router = useRouter();
   const [isFileUploadModalOpen, setIsFileUploadModalOpen] = useState(false);
   const [sharingData, setSharingData] = useState<any>(null);
 
   const globalContext = useContext(GlobalContext);
-  const { address, isConnected } = useAccount();
+  const config = useConfig();
+  const { address, isConnected } = useAccount({ config });
   const {
     rootId,
     rootKey,
@@ -68,6 +63,8 @@ export default function MyBox() {
     setCurrentNodeCid,
     currentNodeKey,
     setCurrentNodeKey,
+    loading,
+    setLoading,
   } = globalContext;
   const { data: getNodeData, error: getNodeError } = useGetNode(
     currentNodeKey!,
@@ -127,7 +124,7 @@ export default function MyBox() {
     // ここにファイルアップロードのためのAPI呼び出し処理を記述します
     console.log("ファイルをアップロード中…");
     try {
-      globalContext.setLoading(true);
+      setLoading(true);
       const res = await createNode(accessToken!, formData);
 
       setRootId(res.root_id);
@@ -141,8 +138,6 @@ export default function MyBox() {
           key: rootKey!,
         },
       ]);
-      // call insert method
-      await insertTableData(res.root_id, res.cid);
 
       toast.success(
         "Upload Success!! Please wait a moment until it is reflected.",
@@ -170,25 +165,24 @@ export default function MyBox() {
         theme: "colored",
       });
     } finally {
-      globalContext.setLoading(false);
+      setLoading(false);
       setIsFileUploadModalOpen(false);
     }
+  };
+
+  const createFolderModalOpen = () => {
+    setIsCreateFolderModalOpen(true);
   };
 
   /**
    * createFolder function
    */
   const createFolder = async () => {
-    setIsCreateFolderModalOpen(true);
     if (!address || !currentNodeCid || !currentNodeKey) return;
     try {
-      globalContext.setLoading(true);
-      // TODO call encrypt API from cryptree
-      // TODO call ipfs API from cryptree
-      // call same API when upload file & create folder
-      // call insert method
+      setLoading(true);
       const formData = new FormData();
-      formData.append("name", "test " + Math.random().toString(36).slice(-8));
+      formData.append("name", folderName);
       formData.append("owner_id", address);
       formData.append("subfolder_key", currentNodeKey!);
       formData.append("root_key", rootKey!);
@@ -205,11 +199,6 @@ export default function MyBox() {
           key: rootKey!,
         },
       ]);
-
-      // fileの場合は、file_dataにデータが入る
-      if (res.metadata.children.length > 0 && res.metadata.children[0].fk) {
-        await insertTableData(res.root_id, res.cid);
-      }
 
       toast.success(
         "CreateFolder Success!! Please wait a moment until it is reflected.",
@@ -237,7 +226,8 @@ export default function MyBox() {
         theme: "colored",
       });
     } finally {
-      globalContext.setLoading(false);
+      setLoading(false);
+      setIsCreateFolderModalOpen(false);
     }
   };
 
@@ -247,11 +237,7 @@ export default function MyBox() {
   const deleteFile = async (cid: string) => {
     if (!address || !currentNodeCid || !currentNodeKey) return;
     try {
-      globalContext.setLoading(true);
-      // TODO call encrypt API from cryptree
-      // TODO call ipfs API from cryptree
-      // call same API when upload file & create folder
-      // call insert method
+      setLoading(true);
       const formData = new FormData();
       formData.append("cid", cid);
       formData.append("subfolder_key", currentNodeKey!);
@@ -296,7 +282,7 @@ export default function MyBox() {
         theme: "colored",
       });
     } finally {
-      globalContext.setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -304,16 +290,11 @@ export default function MyBox() {
    * shareFile function
    */
   const shareFile = async () => {
+    if (!address || !to || !sharingData) return;
     try {
-      globalContext.setLoading(true);
-      // TODO get key value by calling cryptree API
+      setLoading(true);
 
-      console.log("to:", to);
-      // get selectedId's table data
-      const results: TableData[] = await getSelectedTableData(isSelectedId);
-      console.log("results[0]:", results[0]);
-      // call sendNotification method
-      await sendNotification(to, sharingData?.cid, sharingData?.key, rootId!);
+      await sendMessage(address, to, sharingData.cid, sharingData.key, rootId!);
 
       toast.success(
         "Share File Success!! Please wait a moment until it is reflected.",
@@ -341,7 +322,8 @@ export default function MyBox() {
         theme: "colored",
       });
     } finally {
-      globalContext.setLoading(false);
+      setLoading(false);
+      setIsShareModalOpen(false);
     }
   };
 
@@ -350,7 +332,7 @@ export default function MyBox() {
    */
   const reEncrypt = async (targetCid: string) => {
     try {
-      globalContext.setLoading(true);
+      setLoading(true);
 
       const res = await reEncryptNode(
         accessToken!,
@@ -388,7 +370,7 @@ export default function MyBox() {
         theme: "colored",
       });
     } finally {
-      globalContext.setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -397,8 +379,7 @@ export default function MyBox() {
    */
   const download = async (data: string, name: string) => {
     try {
-      globalContext.setLoading(true);
-      // TODO CID
+      setLoading(true);
       // Fileオブジェクトをダウンロードする処理を入れる。
       downloadFile(data, name);
 
@@ -428,27 +409,25 @@ export default function MyBox() {
         theme: "colored",
       });
     } finally {
-      globalContext.setLoading(false);
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    globalContext.setLoading(false);
+    setLoading(false);
     const init = async () => {
       if (!isConnected && !address) {
         router.push("/");
         return;
       }
-      globalContext.setLoading(true);
+      setLoading(true);
       try {
         console.log("getNodeData:", getNodeData);
-        const children = getNodeData?.children;
-        const datas = children;
-        setTableDatas(datas);
+        initializeFirebaseMessaging();
       } catch (err) {
         console.error("err", err);
       } finally {
-        globalContext.setLoading(false);
+        setLoading(false);
       }
     };
     init();
@@ -488,7 +467,7 @@ export default function MyBox() {
                     label="Create Folder"
                     headerVisible={true}
                     headerIcon={<FolderAdd20Regular />}
-                    onClick={createFolder}
+                    onClick={createFolderModalOpen}
                   />
                 </div>
               </div>
@@ -699,10 +678,15 @@ export default function MyBox() {
             className="fixed top-0 left-0 right-0 bottom-0 bg-Neutral-Background-Overlay-Rest"
           >
             <Dialog
-              primaryButtonProps={{ label: "Create" }}
+              primaryButtonProps={{
+                label: "Create",
+                onClick: () => createFolder(),
+                disabled: loading,
+              }}
               secondaryButtonProps={{
                 label: "Cancel",
                 onClick: () => setIsCreateFolderModalOpen(false),
+                disabled: loading,
               }}
             >
               <div className="py-6 text-center">
@@ -714,7 +698,8 @@ export default function MyBox() {
                 <Input
                   id="folderName"
                   label="New folder name"
-                  // inputValue={folderName}
+                  inputValue={folderName}
+                  setInputValue={setFolderName}
                   layout="filledDarker"
                   placeholder="new folder"
                 />

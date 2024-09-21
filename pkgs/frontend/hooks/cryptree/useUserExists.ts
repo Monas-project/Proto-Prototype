@@ -7,7 +7,8 @@ import { CryptoManager } from "@/utils/cryptoManager";
 
 dotenv.config();
 
-const baseUrl: string = process.env.CRYPTREE_API_URL || "http://localhost:8000";
+const baseUrl =
+  process.env.NEXT_PUBLIC_CRYPTREE_API_URL || "http://localhost:3000";
 
 export const useUserExists = (
   address: `0x${string}`,

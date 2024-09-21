@@ -1,12 +1,15 @@
 # Monas Prototype
+
 ![](https://github.com/Monas-project/Filecoin-Data-Economy-Hackathon/blob/eaa9d8d7f122ac51f435745cfd5016bf91ae7931/images/image.png)
+
 ## System Overview
-![](https://github.com/Monas-project/Filecoin-Data-Economy-Hackathon/blob/52ede03fb7179dad41706f0b14469035c35bae16/images/System%20configuration%20diagram.png)  
 
+![](https://github.com/Monas-project/Filecoin-Data-Economy-Hackathon/blob/52ede03fb7179dad41706f0b14469035c35bae16/images/System%20configuration%20diagram.png)
 
-Learn more about the Prototype: [here](https://github.com/Monas-project/Filecoin-Data-Economy-Hackathon/blob/main/docs/prototype.md#monas-decentralized-personal-data-store)   
-Monas Docs: [here](../Filecoin-Data-Economy-Hackathon/docs/files/Monas-docs-v1.0.pdf)    
-Monas Slides: [here](../Filecoin-Data-Economy-Hackathon/docs/files/Monas-slides-v1.0.pdf)  
+Learn more about the Prototype: [here](https://github.com/Monas-project/Filecoin-Data-Economy-Hackathon/blob/main/docs/prototype.md#monas-decentralized-personal-data-store)  
+Monas Docs: [here](../Filecoin-Data-Economy-Hackathon/docs/files/Monas-docs-v1.0.pdf)  
+Monas Slides: [here](../Filecoin-Data-Economy-Hackathon/docs/files/Monas-slides-v1.0.pdf)
+
 ## PushProtocol Signer Info(Ethereum Sepolia)
 
 Address: [0x69d3E7219CE2259654EcBBFf9597936BaDF5Be52](https://sepolia.etherscan.io/address/0x69d3E7219CE2259654EcBBFf9597936BaDF5Be52)
@@ -50,11 +53,8 @@ Address: [0x0d5D749BEbB9521c9604727aB22091a924b4aDd4](https://calibration.filfox
     create `.env.local` & set below values
 
     ```txt
-    NEXT_PUBLIC_ENABLE_TESTNETS=
     NEXT_PUBLIC_API_BASE_URL=
     WALLET_CONNECT_PROJECT_ID=
-    SEPOLIA_RPC_URL=
-    PUSH_PROTOCOL_PRIVATE_KEY=
     SECRET_MESSAGE="Please sign this message to authenticate."
     ```
 
@@ -153,7 +153,8 @@ Address: [0x0d5D749BEbB9521c9604727aB22091a924b4aDd4](https://calibration.filfox
   ```
 
 ## Screenshots
-![](https://github.com/Monas-project/Filecoin-Data-Economy-Hackathon/blob/e08b4993d111993c1ef30dc5d993308b4d3feeef/images/page1.png)  
+
+![](https://github.com/Monas-project/Filecoin-Data-Economy-Hackathon/blob/e08b4993d111993c1ef30dc5d993308b4d3feeef/images/page1.png)
 
 ### References:
 

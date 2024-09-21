@@ -2,7 +2,10 @@
   "builds": [
     {
       "src": "main.py",
-      "use": "@vercel/python"
+      "use": "@vercel/python",
+      "config": {
+        "runtime": "python3.12"
+      }
     }
   ],
   "rewrites": [
@@ -11,5 +14,8 @@
       "destination": "main.py"
     }
   ],
-  "regions": ["hnd1"]
+  "regions": ["hnd1"],
+  "env": {
+    "PYTHONUNBUFFERED": "1"
+  }
 }

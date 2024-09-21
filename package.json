@@ -8,7 +8,8 @@
   "license": "MIT",
   "scripts": {
     "backend": "yarn workspace backend",
-    "frontend": "yarn workspace frontend"
+    "frontend": "yarn workspace frontend",
+    "functions": "yarn workspace functions"
   },
   "workspaces": [
     "pkgs/*"

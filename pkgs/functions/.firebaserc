@@ -1,0 +1,12 @@
+{
+  "projects": {
+    "default": "monas-5f2ce"
+  },
+  "targets": {
+    "monas-5f2ce": {
+      "database": {
+        "default": "monas-5f2ce"
+      }
+    }
+  }
+}

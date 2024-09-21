@@ -2,14 +2,9 @@ import "dotenv/config";
 import * as dotenv from "dotenv";
 
 dotenv.config();
-const baseUrl: string = process.env.CRYPTREE_API_URL || "http://localhost:8000";
 
-type CreateNodeResponse = {
-  metadata: any;
-  cid: any;
-  subfolder_key: any;
-  root_id: any;
-};
+const baseUrl =
+  process.env.NEXT_PUBLIC_CRYPTREE_API_URL || "http://localhost:3000";
 
 export const createNode = async (accessToken: string, formData: FormData) => {
   if (!formData) return;

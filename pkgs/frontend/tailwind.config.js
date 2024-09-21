@@ -11,9 +11,9 @@ module.exports = {
   theme: {
     extend: {
       backgroundImage: {
-        'HeroImageLight': "url('../public/heroImageLight.png')",
-        'HeroImageDark': "url('../public/heroImageDark.png')",
-        'AvatarsImage': "url(../public/AvatarsImage.png)",
+        'HeroImageLight': "url('/heroImageLight.png')",
+        'HeroImageDark': "url('/heroImageDark.png')",
+        'AvatarsImage': "url('/AvatarsImage.png')",
       },
 
       fontFamily: {
