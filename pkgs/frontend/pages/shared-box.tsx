@@ -12,6 +12,7 @@ import NodeTable from "@/components/features/NodeTable";
 import { NodeData } from "@/cryptree/types";
 import Breadcrumb from "@/components/elements/Breadcrumb/Breadcrumb";
 import { useGetNode } from "@/hooks/cryptree/useGetNode";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function SharedBox() {
   const [isGetBoxModalOpen, setIsGetBoxModalOpen] = useState(false);
