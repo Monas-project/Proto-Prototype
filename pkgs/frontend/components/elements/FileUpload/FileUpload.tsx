@@ -8,6 +8,19 @@ import { Player } from "@lottiefiles/react-lottie-player";
 import uploadFileIcon from "@/public/icons/uploadFileIcon.json";
 
 // Propsの型定義
+
+function formatFileSize(bytes: number) {
+  const units = ["B", "KB", "MB", "GB", "TB"];
+  let size = bytes;
+  let unitIndex = 0;
+
+  while (size >= 1024 && unitIndex < units.length - 1) {
+    size /= 1024;
+    unitIndex++;
+  }
+
+  return `${size.toFixed(2)} ${units[unitIndex]}`;
+}
 interface FileUploadProps {
   onFileSelect: (file: File) => void; // ファイル選択時のコールバック関数
   uploadFile: (file: File | null) => Promise<void>; // ファイルアップロード時のコールバック関数
@@ -162,7 +175,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
                       選択されたファイル : {selectedFile.name}
                     </p>
                     <span className="text-BodySmall text-Neutral-Foreground-Variant-Rest">
-                      なんかこの辺にファイルサイズとか書きたいな🥹
+                      サイズ : {formatFileSize(selectedFile.size)}
                     </span>
                   </div>
                 </div>
