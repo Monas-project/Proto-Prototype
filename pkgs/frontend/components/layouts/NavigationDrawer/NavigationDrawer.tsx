@@ -23,15 +23,7 @@ import { useRouter } from "next/router";
 import { useContext } from "react";
 import { GlobalContext } from "@/context/GlobalProvider";
 
-const tabs: VerticalTabProps[] = [
-  { label: "Tab 1", content: <ColorTheme /> },
-  { label: "Tab 2", content: <div></div> },
-  { label: "Tab 3", content: <div></div> },
-  { label: "Tab 4", content: <div></div> },
-  { label: "Tab 5", content: <div></div> },
-  { label: "Tab 6", content: <div></div> },
-  { label: "Tab 7", content: <div></div> },
-];
+const tabs: VerticalTabProps[] = [{ label: "Theme", content: <ColorTheme /> }];
 
 export const NavigationDrawer = () => {
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
@@ -61,12 +53,12 @@ export const NavigationDrawer = () => {
       iconA: MailInbox24Filled,
       iconB: MailInbox24Regular,
     },
-    {
-      name: "Friend List",
-      href: "/friend-list",
-      iconA: PeopleCommunity24Filled,
-      iconB: PeopleCommunity24Regular,
-    },
+    // {
+    //   name: "Friend List",
+    //   href: "/friend-list",
+    //   iconA: PeopleCommunity24Filled,
+    //   iconB: PeopleCommunity24Regular,
+    // },
   ];
 
   // logoutの実装

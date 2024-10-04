@@ -442,18 +442,18 @@ export default function MyBox() {
             <div className="flex flex-col space-y-4 p-6 shadow-Elevation01-Light dark:shadow-Elevation01-Dark sticky top-0 bg-Neutral-Background-2-Rest">
               <div className="flex flex-row justify-between items-center">
                 <Breadcrumb items={breadcrumbItems} onNavigate={moveToDir} />
-                <Button
+                {/* <Button
                   layout="subtle"
                   headerVisible={true}
                   headerIcon={<Grid20Filled />}
                   labelVisible={false}
-                />
+                /> */}
               </div>
               <div className="flex flex-row justify-between items-center">
                 <div className="flex flex-row space-x-4">
-                  <Button label="Type" fotterVisible={true} />
+                  {/* <Button label="Type" fotterVisible={true} />
                   <Button label="People" fotterVisible={true} />
-                  <Button label="Modified" fotterVisible={true} />
+                  <Button label="Modified" fotterVisible={true} /> */}
                 </div>
                 <div className="flex flex-row space-x-4">
                   <Button
@@ -473,7 +473,7 @@ export default function MyBox() {
             </div>
 
             <div className="w-full grow flex flex-col p-6 space-y-6">
-              <According label="Recent Files">
+              {/* <According label="Recent Files">
                 <div className="w-full flex flex-row space-x-4 pl-6 first:pl-0">
                   <CompoundButton
                     headerIcon={<FileFormatIcon fileType="FolderIcon" />}
@@ -512,7 +512,7 @@ export default function MyBox() {
                     secondaryText="3 days ago"
                   />
                 </div>
-              </According>
+              </According> */}
 
               <div className="grow rounded-lg px-6 bg-Neutral-Background-1-Rest">
                 {getNodeData && (

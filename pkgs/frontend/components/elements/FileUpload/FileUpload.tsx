@@ -5,7 +5,7 @@ import { Dismiss20Regular } from "@fluentui/react-icons";
 import FileFormatIcon from "../FileFormatIcon/FileFormatIcon";
 import ProgressBar from "../ProgressBar/ProgressBar";
 import { Player } from "@lottiefiles/react-lottie-player";
-import uploadFileIcon from '@/public/icons/uploadFileIcon.json';
+import uploadFileIcon from "@/public/icons/uploadFileIcon.json";
 
 // Propsの型定義
 interface FileUploadProps {
@@ -89,11 +89,17 @@ const FileUpload: React.FC<FileUploadProps> = ({
   return (
     <>
       <Dialog
-        primaryButtonProps={{ label: 'Upload', onClick: uploadingFile, disabled: !selectedFile }}
-        secondaryButtonProps={{ label: 'Close', onClick: close }}
+        primaryButtonProps={{
+          label: "Upload",
+          onClick: uploadingFile,
+          disabled: !selectedFile,
+        }}
+        secondaryButtonProps={{ label: "Close", onClick: close }}
       >
         <div className="py-6 text-center">
-          <span className="text-TitleLarge text-Neutral-Foreground-1-Rest">Upload File</span>
+          <span className="text-TitleLarge text-Neutral-Foreground-1-Rest">
+            Upload File
+          </span>
         </div>
         <div className="space-y-4">
           <div
@@ -106,21 +112,32 @@ const FileUpload: React.FC<FileUploadProps> = ({
             onDragLeave={handleDragLeave}
             className={`w-[500px] h-60 rounded flex flex-col flex-wrap items-center place-content-center bg-Neutral-Background-2-Rest
             border border-dashed border-Neutral-Stroke-2-Rest hover:border-Primary-Stroke-Compound-Rest
-            ${isHovered || isDragging && 'border-Primary-Stroke-Compound-Rest'}`}
+            ${
+              isHovered || (isDragging && "border-Primary-Stroke-Compound-Rest")
+            }`}
           >
-            <div className={`${isDragging && 'pointer-events-none'}`}>
+            <div className={`${isDragging && "pointer-events-none"}`}>
               <Player
                 ref={uploadFileIconRef}
-                renderer='svg' loop src={uploadFileIcon}
-                style={{ height: '100px' }}
+                renderer="svg"
+                loop
+                src={uploadFileIcon}
+                style={{ height: "100px" }}
               />
             </div>
 
-            <div className={`${isDragging && 'pointer-events-none'} flex flex-col text-center text-Neutral-Foreground-1-Rest`}>
+            <div
+              className={`${
+                isDragging && "pointer-events-none"
+              } flex flex-col text-center text-Neutral-Foreground-1-Rest`}
+            >
               <span className="text-BodyLarge">Drag & Drop Your File</span>
-              <span className="text-BodySmall">or&ensp;
-                <span className="cursor-pointer text-Primary-Foreground-Link-Rest
-                hover:text-Primary-Foreground-Link-Hover hover:underline hover:underline-offset-4 active:text-Primary-Foreground-Link-Pressed">
+              <span className="text-BodySmall">
+                or&ensp;
+                <span
+                  className="cursor-pointer text-Primary-Foreground-Link-Rest
+                hover:text-Primary-Foreground-Link-Hover hover:underline hover:underline-offset-4 active:text-Primary-Foreground-Link-Pressed"
+                >
                   Select a file
                 </span>
                 &ensp;from your computer
@@ -137,7 +154,9 @@ const FileUpload: React.FC<FileUploadProps> = ({
             <div className="w-[500px] rounded flex flex-col space-y-0.5 p-1 bg-Neutral-Background-3-Rest">
               <div className="w-full flex flex-row space-x-2">
                 <div className="w-full flex flex-row space-x-2">
-                  <div className="p-1"><FileFormatIcon fileType='DocumentIcon' /></div>
+                  <div className="p-1">
+                    <FileFormatIcon fileType="DocumentIcon" />
+                  </div>
                   <div className="w-full flex flex-col justify-center">
                     <p className="break-all text-LabelSmallProminent text-Neutral-Foreground-1-Rest">
                       選択されたファイル : {selectedFile.name}

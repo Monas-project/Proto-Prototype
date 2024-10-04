@@ -43,9 +43,9 @@ export default function GetBox() {
               </div>
               <div className="flex flex-row justify-between items-center">
                 <div className="flex flex-row space-x-4">
-                  <Button fotterVisible={true} label="Type" />
+                  {/* <Button fotterVisible={true} label="Type" />
                   <Button fotterVisible={true} label="People" />
-                  <Button fotterVisible={true} label="Modified" />
+                  <Button fotterVisible={true} label="Modified" /> */}
                 </div>
                 <div className="flex flex-row space-x-4"></div>
               </div>
