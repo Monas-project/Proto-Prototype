@@ -149,18 +149,18 @@ export default function SharedBox() {
         <div className="flex flex-col space-y-4 p-6 shadow-Elevation01-Light dark:shadow-Elevation01-Dark sticky top-0 bg-Neutral-Background-2-Rest">
           <div className="flex flex-row justify-between items-center">
             <Breadcrumb items={breadcrumbItems} onNavigate={moveToDir} />
-            <Button
+            {/* <Button
               layout="subtle"
               headerVisible={true}
               headerIcon={<Grid20Filled />}
               labelVisible={false}
-            />
+            /> */}
           </div>
           <div className="flex flex-row justify-between items-center">
             <div className="flex flex-row space-x-4">
-              <Button label="Type" fotterVisible={true} />
+              {/* <Button label="Type" fotterVisible={true} />
               <Button label="People" fotterVisible={true} />
-              <Button label="Modified" fotterVisible={true} />
+              <Button label="Modified" fotterVisible={true} /> */}
             </div>
             <div className="flex flex-row space-x-4">
               <Button

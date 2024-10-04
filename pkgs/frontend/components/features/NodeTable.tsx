@@ -151,12 +151,12 @@ const NodeTable: FC<NodeTableProps> = ({
                     />
                   )}
                 </div>
-                <Button
+                {/* <Button
                   layout="subtle"
                   headerVisible={true}
                   headerIcon={<MoreVertical16Regular />}
                   labelVisible={false}
-                />
+                /> */}
               </td>
             </tr>
           ))}
