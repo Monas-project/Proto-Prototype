@@ -14,7 +14,6 @@ const baseUrl =
 
 export const useSignUp = (address: `0x${string}`, signature: `0x${string}`) => {
   const [data, setData] = useState(null);
-  // const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const {
     accessToken,

@@ -18,7 +18,7 @@ import { useState } from "react";
 import { VerticalTabProps } from "@/components/elements/Tabs/VerticalTab";
 import ColorTheme from "../Settings/ColorTheme";
 import Dialog from "@/components/elements/Dialog/Dialog";
-import { useDisconnect } from "wagmi";
+import { useAccount, useConfig, useDisconnect } from "wagmi";
 import { useRouter } from "next/router";
 import { useContext } from "react";
 import { GlobalContext } from "@/context/GlobalProvider";
@@ -30,7 +30,8 @@ export const NavigationDrawer = () => {
   const [isLogOutMenuOpen, setIsLogOutMenuOpen] = useState(false);
 
   const pathname = usePathname();
-  const { disconnect } = useDisconnect();
+  const config = useConfig();
+  const { disconnect } = useDisconnect({ config });
   const router = useRouter();
   const globalContext = useContext(GlobalContext);
   const { address } = useAccount({ config });
