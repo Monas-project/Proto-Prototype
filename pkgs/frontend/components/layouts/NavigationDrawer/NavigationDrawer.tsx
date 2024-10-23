@@ -18,7 +18,7 @@ import { useState } from "react";
 import { VerticalTabProps } from "@/components/elements/Tabs/VerticalTab";
 import ColorTheme from "../Settings/ColorTheme";
 import Dialog from "@/components/elements/Dialog/Dialog";
-import { useDisconnect } from "wagmi";
+import { useAccount, useConfig, useDisconnect } from "wagmi";
 import { useRouter } from "next/router";
 import { useContext } from "react";
 import { GlobalContext } from "@/context/GlobalProvider";
@@ -30,9 +30,11 @@ export const NavigationDrawer = () => {
   const [isLogOutMenuOpen, setIsLogOutMenuOpen] = useState(false);
 
   const pathname = usePathname();
-  const { disconnect } = useDisconnect();
+  const config = useConfig();
+  const { disconnect } = useDisconnect({ config });
   const router = useRouter();
   const globalContext = useContext(GlobalContext);
+  const { address } = useAccount({ config });
 
   const navContents = [
     {
@@ -122,7 +124,11 @@ export const NavigationDrawer = () => {
         <div className="relative">
           <Persona
             avatarSize={32}
-            primaryText="Montesquieu"
+            primaryText={
+              address
+                ? address.slice(0, 6) + "..." + address.slice(-4)
+                : "No Address"
+            }
             onClickAvatars={() => setIsLogOutMenuOpen(true)}
             onClickIcon={() => setIsSettingsModalOpen(true)}
           />

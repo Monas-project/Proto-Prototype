@@ -13,7 +13,7 @@ export default function Login({ env }: { env: ResponseData }) {
   const config = useConfig();
   const account = useAccount({ config });
   const router = useRouter();
-  const globalContext = useContext(GlobalContext);
+  const { setLoading, loading } = useContext(GlobalContext);
   const { data: signMessageData, signMessageAsync } = useSignMessage({
     config,
   });
@@ -24,14 +24,14 @@ export default function Login({ env }: { env: ResponseData }) {
    * authenticate
    */
   const authenticate = async () => {
+    setLoading(true);
     try {
-      globalContext.setLoading(true);
       // get .env values
       await signMessageAsync({ message: env.SECRET_MESSAGE });
     } catch (err) {
       console.error("error:", err);
     } finally {
-      globalContext.setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -53,7 +53,7 @@ export default function Login({ env }: { env: ResponseData }) {
     >
       <div className="w-full h-full px-20 flex items-center">
         <div className="flex flex-col">
-          {globalContext.loading ? (
+          {loading ? (
             <Loading />
           ) : (
             <>
@@ -122,7 +122,11 @@ export default function Login({ env }: { env: ResponseData }) {
 
                           return (
                             <div style={{ display: "flex", gap: 12 }}>
-                              <button onClick={authenticate} type="button">
+                              <button
+                                onClick={authenticate}
+                                type="button"
+                                disabled={loading}
+                              >
                                 signUp/login
                               </button>
                             </div>

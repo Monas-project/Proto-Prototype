@@ -63,7 +63,6 @@ export const useLogin = (address: `0x${string}`, signature: `0x${string}`) => {
           throw new Error("Failed to reset");
         }
         await signUp();
-        setLoading(false);
         return;
       }
       subfolderKey = res.secretKey;
@@ -72,6 +71,8 @@ export const useLogin = (address: `0x${string}`, signature: `0x${string}`) => {
       setError(
         err instanceof Error ? err : new Error("An unknown error occurred")
       );
+    } finally {
+      setLoading(false);
     }
 
     if (!subfolderKey) {
