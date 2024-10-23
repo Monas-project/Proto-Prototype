@@ -33,6 +33,7 @@ export const NavigationDrawer = () => {
   const { disconnect } = useDisconnect();
   const router = useRouter();
   const globalContext = useContext(GlobalContext);
+  const { address } = useAccount({ config });
 
   const navContents = [
     {
@@ -122,7 +123,11 @@ export const NavigationDrawer = () => {
         <div className="relative">
           <Persona
             avatarSize={32}
-            primaryText="Montesquieu"
+            primaryText={
+              address
+                ? address.slice(0, 6) + "..." + address.slice(-4)
+                : "No Address"
+            }
             onClickAvatars={() => setIsLogOutMenuOpen(true)}
             onClickIcon={() => setIsSettingsModalOpen(true)}
           />
