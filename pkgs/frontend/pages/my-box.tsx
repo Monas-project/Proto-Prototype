@@ -415,14 +415,14 @@ export default function MyBox() {
   useEffect(() => {
     setLoading(false);
     const init = async () => {
-      if (!isConnected && !address) {
-        router.push("/");
-        return;
-      }
+      // if (!isConnected && !address) {
+      //   router.push("/");
+      //   return;
+      // }
       setLoading(true);
       try {
         console.log("getNodeData:", getNodeData);
-        initializeFirebaseMessaging();
+        // initializeFirebaseMessaging();
       } catch (err) {
         console.error("err", err);
       } finally {

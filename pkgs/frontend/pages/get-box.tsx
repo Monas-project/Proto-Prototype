@@ -13,18 +13,30 @@ export default function GetBox() {
   const globalContext = useContext(GlobalContext);
   const config = useConfig();
   const { address, isConnected } = useAccount({ config });
+
+  const mockMessage: Message = {
+    sender: "0x1234567890123456789012345678901234567890",
+    receiver: "0x0987654321098765432109876543210987654321",
+    cid: "1234567890123456789012345678901234567890",
+    key: "1234567890123456789012345678901234567890",
+    rootId: "1234567890123456789012345678901234567890",
+    content: "Hello, world!",
+    timestamp: 1718985600,
+  };
+
   const router = useRouter();
 
   useEffect(() => {
     const init = async () => {
       globalContext.setLoading(true);
-      if (!isConnected && !address) {
-        router.push("/");
-        return;
-      }
-      if (address) {
-        setMessageList(await getMessagesByReceiver(address));
-      }
+      // if (!isConnected && !address) {
+      //   router.push("/");
+      //   return;
+      // }
+      // if (address) {
+      //   // setMessageList(await getMessagesByReceiver(address));
+      // }
+      setMessageList([mockMessage]);
       globalContext.setLoading(false);
     };
     init();
