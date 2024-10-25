@@ -95,7 +95,7 @@ class CryptreeNode(CryptreeNodeModel):
         node_id: str,
         ipfs_client: Type[IpfsClient],
         root_key: str,
-    ):
+    ) -> 'CryptreeNode':
         # Check if the parent is provided
         if self is None:
             raise ValueError("Parent node must be provided.")
