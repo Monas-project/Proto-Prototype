@@ -179,7 +179,7 @@ async def delete_node(
         if parent_node is None:
             raise HTTPException(status_code=400, detail="Parent node not found")
         # Delete the specified node
-        new_node = parent_node.delete_node(cid, ipfs_client, root_key)
+        new_node = parent_node.delete_and_update(cid, ipfs_client, root_key)
         # Return success message
         return {
             "new_subfolder_key": new_node.subfolder_key,
