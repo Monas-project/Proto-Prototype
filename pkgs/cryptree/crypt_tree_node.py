@@ -90,7 +90,7 @@ class CryptreeNode(CryptreeNodeModel):
             cid=cid,
         )
 
-    def delete_and_update(
+    def delete(
         self,
         node_id: str,
         ipfs_client: Type[IpfsClient],
