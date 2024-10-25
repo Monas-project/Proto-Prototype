@@ -1,4 +1,3 @@
-import Button from "@/components/elements/Button/Button";
 import NotificationList from "@/components/elements/NotificationList/NotificationList";
 import LayoutMain from "@/components/layouts/Layout/LayoutMain";
 import Loading from "@/components/loading";

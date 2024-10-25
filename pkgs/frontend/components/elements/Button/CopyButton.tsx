@@ -1,7 +1,6 @@
-"use client";
 import { Copy16Regular } from "@fluentui/react-icons";
 import Button from "./Button";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 
 type ClickEvent = React.MouseEvent<HTMLButtonElement, MouseEvent>;
 

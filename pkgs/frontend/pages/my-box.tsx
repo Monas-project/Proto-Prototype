@@ -11,8 +11,7 @@ import {
   Grid20Filled,
 } from "@fluentui/react-icons";
 import { useContext, useEffect, useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 import { useAccount, useConfig } from "wagmi";
 import { useGetNode } from "@/hooks/cryptree/useGetNode";
 import { useRouter } from "next/router";
@@ -620,19 +619,6 @@ export default function MyBox() {
             </div>
           </div>
         )}
-
-        <ToastContainer
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="colored"
-        />
       </div>
     </LayoutMain>
   );
