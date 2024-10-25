@@ -90,30 +90,30 @@ class CryptreeNode(CryptreeNodeModel):
             cid=cid,
         )
 
-    @classmethod
     def delete_node(
-        cls,
+        self,
         node_id: str,
         ipfs_client: Type[IpfsClient],
         root_key: str,
-        parent: Optional['CryptreeNode'] = None
     ):
         # Check if the parent is provided
-        if parent is None:
+        if self is None:
             raise ValueError("Parent node must be provided.")
         # Remove this node from the parent's child list
-        parent.metadata.children = [child for child in parent.metadata.children if child.cid != node_id]
+        self.metadata.children = [child for child in self.metadata.children if child.cid != node_id]
         # Encrypt and upload the updated parent metadata to IPFS
-        enc_metadata = cls.encrypt(parent.subfolder_key, parent.metadata.model_dump_json().encode())
-        parent.cid = ipfs_client.add_bytes(enc_metadata)
+        enc_metadata = CryptreeNode.encrypt(self.subfolder_key, self.metadata.model_dump_json().encode())
+        self.cid = ipfs_client.add_bytes(enc_metadata)
         # Reflect the parent's update to all nodes
-        cls.update_all_nodes(
-            address=parent.metadata.owner_id,
-            new_cid=parent.cid,
-            target_subfolder_key=parent.subfolder_key,
+        CryptreeNode.update_all_nodes(
+            address=self.metadata.owner_id,
+            new_cid=self.cid,
+            target_subfolder_key=self.subfolder_key,
             ipfs_client=ipfs_client,
             root_key=root_key
         )
+
+        return self
 
 
     def encrypt_metadata(self) -> bytes:
