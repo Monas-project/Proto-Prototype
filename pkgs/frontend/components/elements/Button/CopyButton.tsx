@@ -1,7 +1,6 @@
-"use client";
 import { Copy16Regular } from "@fluentui/react-icons";
 import Button from "./Button";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 
 type ClickEvent = React.MouseEvent<HTMLButtonElement, MouseEvent>;
 
@@ -49,18 +48,6 @@ const CopyButton = ({ label, content }: CopyButtonProps) => {
         labelVisible={true}
         onClick={(e) => copy(e, content)}
         headerIcon={<Copy16Regular />}
-      />
-      <ToastContainer
-        position="top-right"
-        autoClose={2000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="colored"
       />
     </>
   );

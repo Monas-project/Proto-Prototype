@@ -1,3 +1,4 @@
+import "react-toastify/dist/ReactToastify.css";
 import { GlobalProvider } from "@/context/GlobalProvider";
 import { getEnv } from "@/utils/getEnv";
 import {
@@ -14,6 +15,7 @@ import "../styles/globals.css";
 import { ResponseData } from "./api/env";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import DarkMode from "@/components/layouts/DarkMode/DarkMode";
+import { ToastContainer } from "react-toastify";
 
 /**
  * MyApp Component
@@ -42,7 +44,6 @@ function MyApp({ Component, pageProps }: AppProps) {
       }),
     [env]
   );
-
   useEffect(() => {
     const init = async () => {
       // get enviroment values
@@ -81,6 +82,19 @@ function MyApp({ Component, pageProps }: AppProps) {
               <GlobalProvider>
                 <DarkMode>
                   <Component {...pageProps} env={env} />
+                  <ToastContainer
+                    position="top-right"
+                    autoClose={2000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                    theme="colored"
+                    style={{ fontSize: "14px", maxWidth: "300px" }}
+                  />
                 </DarkMode>
               </GlobalProvider>
             </RainbowKitProvider>
