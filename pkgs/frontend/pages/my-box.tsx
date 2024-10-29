@@ -128,7 +128,7 @@ export default function MyBox() {
         {
           text: "Own Space",
           path: "/my-box",
-          cid: rootId!,
+          cid: res.root_id,
           key: rootKey!,
         },
       ]);
@@ -189,7 +189,7 @@ export default function MyBox() {
         {
           text: "Own Space",
           path: "/my-box",
-          cid: rootId!,
+          cid: res.root_id,
           key: rootKey!,
         },
       ]);
@@ -245,7 +245,7 @@ export default function MyBox() {
         {
           text: "Own Space",
           path: "/my-box",
-          cid: rootId!,
+          cid: res.root_id,
           key: rootKey!,
         },
       ]);
