@@ -179,9 +179,13 @@ async def delete_node(
         if parent_node is None:
             raise HTTPException(status_code=400, detail="Parent node not found")
         # Delete the specified node
-        CryptreeNode.delete_node(cid, ipfs_client, root_key, parent_node)
+        new_node = parent_node.delete(cid, ipfs_client, root_key)
         # Return success message
-        return {"message": "Node deleted successfully"}
+        return {
+            "new_subfolder_key": new_node.subfolder_key,
+            "new_cid": new_node.cid,
+            "root_id": RootIdStoreContract.get_root_id(new_node.metadata.owner_id),
+        }
     except Exception as e:
         # Return 500 error if an exception occurs
         raise HTTPException(status_code=500, detail=str(e))
