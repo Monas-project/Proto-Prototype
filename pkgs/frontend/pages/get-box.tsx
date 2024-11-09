@@ -61,7 +61,8 @@ export default function GetBox() {
                         cid={push.cid || ""}
                         subfolderKey={push.key || ""}
                         rootId={push.rootId || ""}
-                        key={push.timestamp}
+                        key={push.timestamp.toString()}
+                        timestamp={push.timestamp}
                       />
                     ))}
                   </>

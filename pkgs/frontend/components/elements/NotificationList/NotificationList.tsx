@@ -8,6 +8,7 @@ export type NotificationListProps = {
   cid?: string;
   subfolderKey?: string;
   rootId?: string;
+  timestamp?: number;
 };
 
 const NotificationList: FC<NotificationListProps> = ({
@@ -16,6 +17,7 @@ const NotificationList: FC<NotificationListProps> = ({
   cid = "cid",
   subfolderKey = "key",
   rootId = "rootId",
+  timestamp = 0,
 }) => {
   const [isChecked, setIsChecked] = useState<boolean>(false);
 
@@ -36,11 +38,20 @@ const NotificationList: FC<NotificationListProps> = ({
                 : "border-Neutral-Stroke-1-Rest group-hover:border-Neutral-Stroke-1-Hover"
             }`}
           >
-            <Checkboxes
-              label={label}
+            {/* <Checkboxes
+              label={
+                timestamp
+                  ? label + ` at ${new Date(timestamp).toLocaleString("ja-JP")}`
+                  : label
+              }
               isChecked={isChecked}
               onClick={() => setIsChecked(!isChecked)}
-            />
+            /> */}
+            <div>
+              {label}
+              {timestamp &&
+                ` at ${new Date(timestamp).toLocaleString("ja-JP")}`}
+            </div>
           </div>
           <div className=" space-y-2 pl-8 pr-6 py-3">
             <span className="block text-BodyLarge">{title}</span>
