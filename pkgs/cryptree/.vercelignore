@@ -1,1 +1,6 @@
 .env
+aws
+ec2
+ipfs
+docker
+__pycache__
