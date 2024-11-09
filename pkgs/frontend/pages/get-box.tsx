@@ -60,7 +60,8 @@ export default function GetBox() {
                         title={push.content}
                         shareCode={push.shareCode || ""}
                         rootId={push.rootId || ""}
-                        key={push.timestamp}
+                        key={push.timestamp.toString()}
+                        timestamp={push.timestamp}
                       />
                     ))}
                   </>
