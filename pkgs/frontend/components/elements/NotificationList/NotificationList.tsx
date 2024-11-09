@@ -5,16 +5,14 @@ import { CopyButton } from "../Button/CopyButton";
 export type NotificationListProps = {
   label: string;
   title: string;
-  cid?: string;
-  subfolderKey?: string;
+  shareCode?: string;
   rootId?: string;
 };
 
 const NotificationList: FC<NotificationListProps> = ({
   label = "Label",
   title = "Title",
-  cid = "cid",
-  subfolderKey = "key",
+  shareCode = "shareCode",
   rootId = "rootId",
 }) => {
   const [isChecked, setIsChecked] = useState<boolean>(false);
@@ -46,10 +44,13 @@ const NotificationList: FC<NotificationListProps> = ({
             <span className="block text-BodyLarge">{title}</span>
             <div className="flex flex-col space-y-1 text-BodySmall text-Neutral-Foreground-Variant-Rest">
               <span>
-                cid: <CopyButton label={cid} content={cid} />
-              </span>
-              <span>
-                key: <CopyButton label={subfolderKey} content={subfolderKey} />
+                shareCode:
+                <CopyButton
+                  label={`${shareCode.slice(0, 10)}...${shareCode.slice(
+                    shareCode.length - 10
+                  )}`}
+                  content={shareCode}
+                />
               </span>
               <span>
                 rootId:

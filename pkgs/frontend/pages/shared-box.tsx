@@ -7,26 +7,26 @@ import { getBox } from "@/cryptree/getBox";
 import { downloadFile } from "@/utils/downloadFile";
 import { downloadFolderZip } from "@/cryptree/downloadFolderZip";
 import { Grid20Filled, MailInbox20Filled } from "@fluentui/react-icons";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import NodeTable from "@/components/features/NodeTable";
 import { NodeData } from "@/cryptree/types";
 import Breadcrumb from "@/components/elements/Breadcrumb/Breadcrumb";
 import { useGetNode } from "@/hooks/cryptree/useGetNode";
+import * as ShareCodeHelper from "@/utils/shareCodeHelper";
 
 export default function SharedBox() {
   const [isGetBoxModalOpen, setIsGetBoxModalOpen] = useState(false);
-  const [cid, setCid] = useState<string>("");
   const [currentCid, setCurrentCid] = useState<string>("");
   const [currentSubfolderKey, setCurrentSubfolderKey] = useState<string>("");
-  const [subfolderKey, setSubfolderKey] = useState<string>("");
+  const [shareCode, setShareCode] = useState<string>("");
   const globalContext = useContext(GlobalContext);
   const { rootKey, accessToken, loading, setLoading } = globalContext;
   const [breadcrumbItems, setBreadcrumbItems] = useState<any[]>([
     {
       text: "Shared Box",
       path: "/shared-box",
-      cid: cid + "a",
-      key: rootKey + "a",
+      cid: currentCid + "ROOT",
+      key: rootKey + "ROOT",
     },
   ]);
 
@@ -40,6 +40,10 @@ export default function SharedBox() {
     if (!accessToken) {
       return;
     }
+    if (!shareCode) {
+      return;
+    }
+    const { cid, subfolderKey } = ShareCodeHelper.decode(shareCode);
     if (!cid || !subfolderKey) {
       return;
     }
@@ -51,8 +55,7 @@ export default function SharedBox() {
       }
       setNodeData(sharedNode);
       setLoading(false);
-      setCid("");
-      setSubfolderKey("");
+      setShareCode("");
       setIsGetBoxModalOpen(false);
     } catch (err) {
       console.error("err:", err);
@@ -101,8 +104,7 @@ export default function SharedBox() {
 
   const handleCloseButton = () => {
     setIsGetBoxModalOpen(false);
-    setCid("");
-    setSubfolderKey("");
+    setShareCode("");
   };
 
   const openNode = async (name: string, cid: string, subfolderKey: string) => {
@@ -196,7 +198,7 @@ export default function SharedBox() {
               primaryButtonProps={{
                 label: "Receive",
                 onClick: receive,
-                disabled: cid === "" || subfolderKey === "" || loading,
+                disabled: shareCode === "" || loading,
               }}
               secondaryButtonProps={{
                 label: "Close",
@@ -211,20 +213,12 @@ export default function SharedBox() {
               </div>
               <div className="space-y-4">
                 <Input
-                  id="cid"
-                  label="CID"
-                  inputValue={cid}
-                  setInputValue={setCid}
+                  id="shareCode"
+                  label="Share Code"
+                  inputValue={shareCode}
+                  setInputValue={setShareCode}
                   layout="filledDarker"
-                  placeholder="Enter CID"
-                />
-                <Input
-                  id="secretKey"
-                  label="Secret Key"
-                  inputValue={subfolderKey}
-                  setInputValue={setSubfolderKey}
-                  layout="filledDarker"
-                  placeholder="Enter Secret Key"
+                  placeholder="Enter Share Code"
                 />
               </div>
             </Dialog>
