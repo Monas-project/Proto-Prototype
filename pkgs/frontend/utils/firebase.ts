@@ -146,7 +146,6 @@ const getMessages = async (
       content: raw.content,
       timestamp: raw.timestamp,
     };
-    console.log("message:", message);
     messages.push(message);
   });
 
