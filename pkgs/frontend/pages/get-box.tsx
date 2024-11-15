@@ -58,10 +58,10 @@ export default function GetBox() {
                       <NotificationList
                         label={`Shared Info from ${push.sender}`}
                         title={push.content}
-                        cid={push.cid || ""}
-                        subfolderKey={push.key || ""}
+                        shareCode={push.shareCode || ""}
                         rootId={push.rootId || ""}
-                        key={push.timestamp}
+                        key={push.timestamp.toString()}
+                        timestamp={push.timestamp}
                       />
                     ))}
                   </>

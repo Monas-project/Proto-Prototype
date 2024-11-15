@@ -22,6 +22,7 @@ import {
   onMessage,
 } from "firebase/messaging";
 import { Address } from "viem";
+import * as ShareCodeHelper from "@/utils/shareCodeHelper";
 
 export const firebaseApp = initializeApp(firebaseConfig);
 export const firebaseAuth = getAuth(firebaseApp);
@@ -71,11 +72,20 @@ export const saveFcmToken = async (address: `0x${string}`) => {
   }
 };
 
-export interface Message {
+export interface RawMessage {
   sender: Address;
   receiver: Address;
   cid: string;
   key: string;
+  rootId: string;
+  content: string;
+  timestamp: number;
+}
+
+export interface Message {
+  sender: Address;
+  receiver: Address;
+  shareCode: string;
   rootId: string;
   content: string;
   timestamp: number;
@@ -95,7 +105,7 @@ export const sendMessage = async (
   // pushを使用して一意のキーを生成
   const newMessageRef = push(messagesRef);
 
-  const message: Message = {
+  const message: RawMessage = {
     sender,
     receiver,
     cid,
@@ -109,42 +119,47 @@ export const sendMessage = async (
   await set(newMessageRef, message);
 };
 
-// 特定の送信者のメッセージを取得する関数
-export const getMessagesBySender = async (sender: Address) => {
-  const messagesRef = ref(firebaseRtDb, "messages");
-  const senderQuery = query(
-    messagesRef,
-    orderByChild("sender"),
-    equalTo(sender)
-  );
-
-  const snapshot = await get(senderQuery);
-  const messages: Message[] = [];
-
-  snapshot.forEach((childSnapshot: IteratedDataSnapshot) => {
-    messages.push(childSnapshot.val() as Message);
-  });
-
-  return messages;
-};
-
-// 特定の受信者のメッセージを取得する関数
-export const getMessagesByReceiver = async (receiver: Address) => {
+const getMessages = async (
+  orderByChildColumn: "sender" | "receiver",
+  address: Address
+) => {
   const messagesRef = ref(firebaseRtDb, "messages");
   const receiverQuery = query(
     messagesRef,
-    orderByChild("receiver"),
-    equalTo(receiver)
+    orderByChild(orderByChildColumn),
+    equalTo(address)
   );
 
   const snapshot = await get(receiverQuery);
   const messages: Message[] = [];
 
   snapshot.forEach((childSnapshot: IteratedDataSnapshot) => {
-    messages.push(childSnapshot.val() as Message);
+    const raw = childSnapshot.val() as RawMessage;
+    const message: Message = {
+      sender: raw.sender,
+      receiver: raw.receiver,
+      shareCode: ShareCodeHelper.encode({
+        subfolderKey: raw.key,
+        cid: raw.cid,
+      }),
+      rootId: raw.rootId,
+      content: raw.content,
+      timestamp: raw.timestamp,
+    };
+    messages.push(message);
   });
 
   return messages;
+};
+
+// 特定の送信者のメッセージを取得する関数
+export const getMessagesBySender = async (sender: Address) => {
+  return getMessages("sender", sender);
+};
+
+// 特定の受信者のメッセージを取得する関数
+export const getMessagesByReceiver = async (receiver: Address) => {
+  return getMessages("receiver", receiver);
 };
 
 export function setupMessageListener() {

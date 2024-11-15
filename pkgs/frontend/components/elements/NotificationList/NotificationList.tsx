@@ -5,17 +5,17 @@ import { CopyButton } from "../Button/CopyButton";
 export type NotificationListProps = {
   label: string;
   title: string;
-  cid?: string;
-  subfolderKey?: string;
+  shareCode?: string;
   rootId?: string;
+  timestamp?: number;
 };
 
 const NotificationList: FC<NotificationListProps> = ({
   label = "Label",
   title = "Title",
-  cid = "cid",
-  subfolderKey = "key",
+  shareCode = "shareCode",
   rootId = "rootId",
+  timestamp = 0,
 }) => {
   const [isChecked, setIsChecked] = useState<boolean>(false);
 
@@ -36,20 +36,32 @@ const NotificationList: FC<NotificationListProps> = ({
                 : "border-Neutral-Stroke-1-Rest group-hover:border-Neutral-Stroke-1-Hover"
             }`}
           >
-            <Checkboxes
-              label={label}
+            {/* <Checkboxes
+              label={
+                timestamp
+                  ? label + ` at ${new Date(timestamp).toLocaleString("ja-JP")}`
+                  : label
+              }
               isChecked={isChecked}
               onClick={() => setIsChecked(!isChecked)}
-            />
+            /> */}
+            <div>
+              {label}
+              {timestamp &&
+                ` at ${new Date(timestamp).toLocaleString("ja-JP")}`}
+            </div>
           </div>
           <div className=" space-y-2 pl-8 pr-6 py-3">
             <span className="block text-BodyLarge">{title}</span>
             <div className="flex flex-col space-y-1 text-BodySmall text-Neutral-Foreground-Variant-Rest">
               <span>
-                cid: <CopyButton label={cid} content={cid} />
-              </span>
-              <span>
-                key: <CopyButton label={subfolderKey} content={subfolderKey} />
+                shareCode:
+                <CopyButton
+                  label={`${shareCode.slice(0, 10)}...${shareCode.slice(
+                    shareCode.length - 10
+                  )}`}
+                  content={shareCode}
+                />
               </span>
               <span>
                 rootId:
