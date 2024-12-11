@@ -8,7 +8,7 @@
   ],
   "functions": {
     "api/main.py": {
-      "maxDuration": 30
+      "maxDuration": 60
     }
   },
   "regions": ["hnd1"],
