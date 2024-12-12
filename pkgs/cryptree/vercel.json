@@ -1,19 +1,16 @@
 {
-  "builds": [
+  "version": 2,
+  "routes": [
     {
-      "src": "main.py",
-      "use": "@vercel/python",
-      "config": {
-        "runtime": "python3.12"
-      }
+      "src": "/(.*)",
+      "dest": "api/main.py"
     }
   ],
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "main.py"
+  "functions": {
+    "api/main.py": {
+      "maxDuration": 60
     }
-  ],
+  },
   "regions": ["hnd1"],
   "env": {
     "PYTHONUNBUFFERED": "1"
